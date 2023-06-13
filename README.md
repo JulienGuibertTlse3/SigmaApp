@@ -161,18 +161,18 @@ bslib_0.4.2
 quadprog_1.5-8     
 	
 ## Explanation
-To run this project, download the files available and store them in the same folder. (A complete folder to download is also available "Shiny_def")
+To run this project, download the files available and store them in the same folder. (A complete folder to download is also available in the github "Shiny_def")
 Afterwards, run the Shiny_AppS.r file to open the tool.
 
 Description of each files:
  * www folder:        
-folder which contains images used in the tool.      
+folder which contains images used for the tool or the README.      
 
  * R_func.R:        
 R file with functions corresponding to each method used to compute the similarity matrices which our main file uses.         
 
  * Shiny_AppS.R:        
-R Script which creates the tool. It is composed of 4 different panels. The first two give information about pre-processing steps and methods available. The 3rd panel enable the user to choose upload the data he wants to work on, to choose the method and the preproccesing step he wants to use and then to create, store and export the produced matrices. The last panel enable the user to compare the matrices produced using different method and different type of vizualisation tools.
+R Script which creates the tool. It is composed of 4 different panels. The first two give information about pre-processing steps and methods available. The 3rd panel enable the user to upload the data he wants to work on, to choose the method and the preproccesing step he wants to use and then to create, store and export the produced matrices. The last panel enable the user to compare the matrices produced using different method and different type of vizualisation tools.
 
 
 ## Contact
