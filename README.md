@@ -31,10 +31,10 @@ www folder
 
 Packages version: 
 * attached packages:
-PLNmodels_1.0.1
-shinyjs_2.1.0
-corrplot_0.92
-zCompositions_1.4.0-1 
+PLNmodels_1.0.1	
+shinyjs_2.1.0	
+corrplot_0.92	
+zCompositions_1.4.0-1 	
 truncnorm_1.0-8       
 NADA_1.6-1.1         
 survival_3.3-1        
