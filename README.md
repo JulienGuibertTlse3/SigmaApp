@@ -8,7 +8,7 @@ Tool to build similarity matrices and to compare them.
 * [Contact](#Contact)
 
 ## General info
-This project is funded by DIGIT-BIO Behind the Counter
+The project, which the tool has been created in, is funded by DIGIT-BIO Behind the Counter
 
 ![image](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/44108616-9a55-49dd-94ff-d6b3a733b4ed)
 
@@ -16,7 +16,7 @@ And it is linked with the GEroNIMO project.
 
 ![gero](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/cf7ac206-f596-4786-98a7-7e74407f2c3e)
 
-Tool created by Julien GUIBERT under the supervision of Christel Marie-Etancelin and Ingrid David at INRAe Castanet-Tolosan, France.
+The tool was created by Julien GUIBERT under the supervision of Christel Marie-Etancelin and Ingrid David at INRAe Castanet-Tolosan, France.
 
 ![image](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/8685a7f2-7bf2-4131-b7ee-8011bc70ccea)
 
