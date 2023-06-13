@@ -3,8 +3,8 @@ Tool to build similarity matrices and to compare them.
 
 ## Table of contents
 * [General info](#general-info)
-* [R, Files & Packages](#R, Files & Packages)
-* [Explanation](#How it works)
+* [R, Files & Packages](#R-Files-Packages)
+* [Explanation](#How-it-works)
 
 ## General info
 This project is funded by DIGIT-BIO Behind the Counter
@@ -16,6 +16,9 @@ And it is linked with the GEroNIMO project.
 ![image](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/dc3e6113-53b0-422a-b1ab-7fc04c6d9001)
 
 Tool created by Julien GUIBERT under the supervision of Christel Marie-Etancelin and Ingrid David at INRAe Castanet-Tolosan, France.
+
+![image](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/8685a7f2-7bf2-4131-b7ee-8011bc70ccea)
+
 	
 ## R, Files & Packages
 Project is created with:
