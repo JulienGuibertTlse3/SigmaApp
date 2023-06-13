@@ -1,0 +1,147 @@
+/* style.css */
+
+body {
+  background-color: #f0f0f0;
+  font-family: Times New Roman, sans-serif;
+}
+
+large-font {
+  font-size: 20px; /* Adjust the font size as per your preference */
+}
+
+h1 {
+  font-size: 24px;
+  color: #FFFFFF;
+  margin-bottom: 20px;
+}
+
+
+h2 {
+  font-size: 20px;
+  color: #FFFFFF;
+  margin-bottom: 20px;
+}
+
+/* Customize the navbar appearance */
+.navbar-default {
+  background-color: #4aaef0;
+  border-color: #e7e7e7;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.navbar-default .navbar-brand {
+  color: #333;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: #333;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  background-color: #1c1a1a;
+  color: #FFFFFF;
+}
+
+/* Customize the tab panel appearance */
+.nav-tabs > li > a {
+  color: #333;
+  border-color: #e7e7e7;
+  background-color: #f8f8f8;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  background-color: #e7e7e7;
+  color: #333;
+  border-color: #e7e7e7;
+}
+
+
+/* Customize the table appearance */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table th, table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Customize the buttons appearance */
+.btn-primary {
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+  background-color: #286090;
+  border-color: #204d74;
+}
+
+/* Customize the buttons appearance */
+.btn-secondary {
+  background-color: #337ab7;
+  border-color: #c70610;
+}
+
+/* Customize the page headers */
+h1, h2 {
+  color: #333;
+}
+
+/* Customize the page text */
+p, .text-output {
+  color: #555;
+  font-size: 24px ;
+}
+
+/* Customize the toggle buttons */
+.action-button {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #90021F;
+  color: #fff;
+  border-color: #2f0be0;
+}
+
+.action-button:hover, .action-button:focus {
+  background-color: #90021F;
+  color: #fff;
+  border-color: #2f0be0;
+}
+
+
+/* Customize the export button */
+.download-button {
+  background-color: #337ab7; /* Button background color */
+  color: #fff; /* Button text color */
+  border-color: #c70610; /* Button border color */
+  padding: 8px 12px; /* Button padding */
+  font-size: 14px; /* Button font size */
+}
+
+.download-button:hover,
+.download-button:focus,
+.download-button:active,
+.download-button.active {
+  background-color: #286090; /* Button background color on hover, focus, or active state */
+  border-color: #c70610; /* Button border color on hover, focus, or active state */
+}
+
+/* Customize the images */
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Apply your custom CSS styles here */
+      .selectedMethods label {
+        font-size: 20px;
+
