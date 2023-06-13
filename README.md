@@ -14,13 +14,13 @@ The project, which the tool has been created in, is funded by DIGIT-BIO Behind t
 
 And it is linked with the GEroNIMO project.
 
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/gro.PNG" width="700" height="100">
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/ID_EF_Logo-GEroNIMO_TRANSP_L.png" width="450" height="175">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/gro.PNG" width="800" height="150">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/ID_EF_Logo-GEroNIMO_TRANSP_L.png" width="450" height="200">
 
 
 The tool was created by Julien GUIBERT under the supervision of Christel Marie-Etancelin and Ingrid David at INRAe Castanet-Tolosan, France.
 
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Logo-INRAE_Quadri-web.jpg" width="300" height="100">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Logo-INRAE_Quadri-web.jpg" width="400" height="100">
 
 	
 ## R, Files & Packages
