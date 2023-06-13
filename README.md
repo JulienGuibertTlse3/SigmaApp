@@ -26,8 +26,8 @@ Project is created with:
 * R version: 4.2.1
 
 Files available: 
-* Shiny_AppS.R
-R_func.R
+* Shiny_AppS.R        
+R_func.R           
 www folder
 
 Packages version: 
