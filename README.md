@@ -5,6 +5,7 @@ Tool to build similarity matrices and to compare them.
 * [General info](#general-info)
 * [R, Files & Packages](#R-Files-Packages)
 * [Explanation](#How-it-works)
+* [Contact](#Contact)
 
 ## General info
 This project is funded by DIGIT-BIO Behind the Counter
@@ -61,11 +62,11 @@ ggplot2_3.4.2
 ape_5.6-2             
 shiny_1.7.4 
 
-* loaded via a namespace (and not attached):
-colorspace_2.0-3
-ellipsis_0.3.2
-rsconnect_0.8.29    
-glassoFast_1.0       
+* loaded via a namespace (and not attached):            
+colorspace_2.0-3             
+ellipsis_0.3.2               
+rsconnect_0.8.29                 
+glassoFast_1.0        
 gridtext_0.1.5       
 ggtext_0.1.2        
 rstudioapi_0.14      
@@ -122,18 +123,18 @@ gridExtra_2.3
 sass_0.4.5          
 stringi_1.7.8       
 tseries_0.10-54     
-randomForest_4.7-1.1
+randomForest_4.7-1.1                
 TTR_0.24.3          
 rlang_1.1.1         
-pkgconfig_2.0.3     
-fontawesome_0.5.1   
-stinepack_1.4       
-htmlwidgets_1.6.2   
-bit_4.0.4           
-tidyselect_1.2.0    
-processx_3.7.0      
-parallelly_1.34.0   
-magrittr_2.0.3      
+pkgconfig_2.0.3           
+fontawesome_0.5.1        
+stinepack_1.4        
+htmlwidgets_1.6.2        
+bit_4.0.4            
+tidyselect_1.2.0        
+processx_3.7.0           
+parallelly_1.34.0          
+magrittr_2.0.3          
 R6_2.5.1            
 generics_0.1.3      
 DBI_1.1.3           
@@ -142,8 +143,8 @@ withr_2.5.0
 mgcv_1.8-40         
 xts_0.13.1          
 nnet_7.3-17         
-future.apply_1.10.0 
-bayesm_3.1-4       
+future.apply_1.10.0             
+bayesm_3.1-4        
 utf8_1.2.2         
 tzdb_0.3.0          
 grid_4.2.1          
@@ -153,17 +154,27 @@ forecast_8.21
 digest_0.6.29        
 httpuv_1.6.6        
 munsell_0.5.0       
-viridisLite_0.4.2   
+viridisLite_0.4.2        
 bslib_0.4.2         
-quadprog_1.5-8 
+quadprog_1.5-8     
 	
 ## Explanation
 To run this project, download the files available and store them in the same folder. (A complete folder to download is also available "Shiny_def")
 Afterwards, run the Shiny_AppS.r file to open the tool.
 
 Description of each files:
- * www folder: folder which contains images used in the tool.
- * R_func.R: R file with functions corresponding to each method used to compute the similarity matrices which our main file uses.
- * Shiny_AppS.R: R Script which creates the tool. It is composed of 4 different panels. The first two give information about pre-processing steps and methods available.
+ * www folder:        
+folder which contains images used in the tool.      
+
+ * R_func.R:        
+R file with functions corresponding to each method used to compute the similarity matrices which our main file uses.         
+
+ * Shiny_AppS.R:        
+R Script which creates the tool. It is composed of 4 different panels. The first two give information about pre-processing steps and methods available.
 The 3rd panel enable the user to choose upload the data he wants to work on, to choose the method and the preproccesing step he wants to use and then to create, store and export the produced matrices.
 The last panel enable the user to compare the matrices produced using different method and different type of vizualisation tools.
+
+
+## Contact
+
+If there is any issue, you can contact me using the following adresses: julien.guibert@inrae.fr (until the 30/06) or Julien.Guibert3@outlook.fr (after the 30/06).
