@@ -15,6 +15,8 @@ The project, which the tool has been created in, is funded by DIGIT-BIO Behind t
 And it is linked with the GEroNIMO project.
 
 ![gero](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/cf7ac206-f596-4786-98a7-7e74407f2c3e)
+![ID_EF_Logo-GEroNIMO_TRANSP_L](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/68bf6dae-5769-438f-b0d6-a77bf5e7343f)
+
 
 The tool was created by Julien GUIBERT under the supervision of Christel Marie-Etancelin and Ingrid David at INRAe Castanet-Tolosan, France.
 
