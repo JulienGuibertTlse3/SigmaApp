@@ -12,6 +12,8 @@ The project, which the tool has been created in, is funded by DIGIT-BIO Behind t
 
 ![image](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/44108616-9a55-49dd-94ff-d6b3a733b4ed =250x250)
 
+<img src="(https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/44108616-9a55-49dd-94ff-d6b3a733b4ed" width="100" height="100">
+
 And it is linked with the GEroNIMO project.
 
 ![gero](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/cf7ac206-f596-4786-98a7-7e74407f2c3e | width=100)
