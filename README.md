@@ -14,7 +14,7 @@ This project is funded by DIGIT-BIO Behind the Counter
 
 And it is linked with the GEroNIMO project.
 
-![image](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/dc3e6113-53b0-422a-b1ab-7fc04c6d9001)
+![gero](https://github.com/JulienGuibertTlse3/SigmaApp/assets/92673300/cf7ac206-f596-4786-98a7-7e74407f2c3e)
 
 Tool created by Julien GUIBERT under the supervision of Christel Marie-Etancelin and Ingrid David at INRAe Castanet-Tolosan, France.
 
