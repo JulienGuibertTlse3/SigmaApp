@@ -10,17 +10,17 @@ Tool to build similarity matrices and to compare them.
 ## General info
 The project, which the tool has been created in, is funded by DIGIT-BIO Behind the Counter
 
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Image1.jpg" width="250" height="100">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Image1.jpg" width="300" height="125">
 
 And it is linked with the GEroNIMO project.
 
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Image1.jpg" width="250" height="100">
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/ID_EF_Logo-GEroNIMO_TRANSP_L.png" width="250" height="100">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/gro.PNG" width="250" height="100">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/ID_EF_Logo-GEroNIMO_TRANSP_L.png" width="40" height="150">
 
 
 The tool was created by Julien GUIBERT under the supervision of Christel Marie-Etancelin and Ingrid David at INRAe Castanet-Tolosan, France.
 
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Logo-INRAE_Quadri-web.jpg" width="250" height="100">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Logo-INRAE_Quadri-web.jpg" width="300" height="100">
 
 	
 ## R, Files & Packages
