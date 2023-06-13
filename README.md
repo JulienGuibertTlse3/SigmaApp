@@ -10,7 +10,7 @@ Tool to build similarity matrices and to compare them.
 ## General info
 The project, which the tool has been created in, is funded by DIGIT-BIO Behind the Counter
 
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Image1.jpg" width="400" height="400">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/Image1.jpg" width="500" height="200">
 
 And it is linked with the GEroNIMO project.
 
