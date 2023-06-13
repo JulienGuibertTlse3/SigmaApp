@@ -14,7 +14,7 @@ The project, which the tool has been created in, is funded by DIGIT-BIO Behind t
 
 And it is linked with the GEroNIMO project.
 
-<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/gro.PNG" width="800" height="150">
+<img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/gro.PNG" width="850" height="100">
 <img src="https://github.com/JulienGuibertTlse3/SigmaApp/blob/main/www/ID_EF_Logo-GEroNIMO_TRANSP_L.png" width="450" height="200">
 
 
