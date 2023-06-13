@@ -31,7 +31,7 @@ www folder
 
 Packages version: 
 * attached packages:
-PLNmodels_1.0.1       shinyjs_2.1.0         corrplot_0.92        
+PLNmodels_1.0.1		shinyjs_2.1.0		corrplot_0.92
 zCompositions_1.4.0-1 truncnorm_1.0-8       NADA_1.6-1.1         
 survival_3.3-1        MASS_7.3-57           xtable_1.8-4         
 DT_0.27               compositions_2.0-6    imputeMissings_0.0.3 
