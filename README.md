@@ -27,8 +27,8 @@ Project is created with:
 
 Files available: 
 * Shiny_AppS.R        
-R_func.R           
-www folder
+* R_func.R           
+* www folder
 
 Packages version: 
 * attached packages:          
