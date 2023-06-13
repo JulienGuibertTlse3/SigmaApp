@@ -43,7 +43,7 @@ MASS_7.3-57
 xtable_1.8-4         
 DT_0.27             
 compositions_2.0-6    
-imputeMissings_0.0.3 
+imputeMissings_0.0.3              
 imputeTS_3.3          
 lubridate_1.9.2       
 forcats_1.0.0        
@@ -170,9 +170,9 @@ folder which contains images used in the tool.
 R file with functions corresponding to each method used to compute the similarity matrices which our main file uses.         
 
  * Shiny_AppS.R:        
-R Script which creates the tool. It is composed of 4 different panels. The first two give information about pre-processing steps and methods available.
-The 3rd panel enable the user to choose upload the data he wants to work on, to choose the method and the preproccesing step he wants to use and then to create, store and export the produced matrices.
-The last panel enable the user to compare the matrices produced using different method and different type of vizualisation tools.
+R Script which creates the tool. It is composed of 4 different panels.             
+
+The first two give information about pre-processing steps and methods available. The 3rd panel enable the user to choose upload the data he wants to work on, to choose the method and the preproccesing step he wants to use and then to create, store and export the produced matrices. The last panel enable the user to compare the matrices produced using different method and different type of vizualisation tools.
 
 
 ## Contact
