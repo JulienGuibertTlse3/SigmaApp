@@ -1,5 +1,5 @@
 # Install required packages if not already installed
-install.packages(c("shiny", "PLNmodels", "shinyjs","DT","corrplot", "ape", "stats", "xtable", "plotly", "vegan", "tidyverse", "imputeTS", "imputeMissings", "compositions", "zCompositions"))
+install.packages(c("shiny", "PLNmodels", "shinyjs","DT","corrplot","cowplot","ggplot2","gridExtra","reshape2", "ape", "stats", "xtable", "plotly", "vegan", "tidyverse", "imputeTS", "imputeMissings", "compositions", "zCompositions"))
 
 library(shiny)
 library(ape)
@@ -7,6 +7,7 @@ library(stats)
 library(plotly)
 library(vegan)
 library(tidyverse)
+library(reshape2)
 library(imputeTS)
 library(imputeMissings)
 library(compositions)
@@ -14,7 +15,10 @@ library(DT)
 library(xtable)
 library(zCompositions)
 library(corrplot)
+library(cowplot)
 library(shinyjs)
+library(ggplot2)
+library(gridExtra)
 library(PLNmodels)
 source(file = 'R_func.R')
 
@@ -333,11 +337,13 @@ ui <- navbarPage(
             options = list(maxOptions = 10, plugins = list("remove_button"))
           ),
         actionButton("compareButtonPlot", "Compare Similarity Matrices as Plot"),
+        actionButton("compareButtonCorrPlot", "Compare Similarity Matrices as CorrPlot"),
         actionButton("compareButtonTable", "Compare Similarity Matrices as Table"),
         actionButton("MantelTest", "Mantel Test")
       ),
       mainPanel(
         plotOutput("comparisonPlot"),
+        plotOutput("comparisonCorrPlot"),
         tableOutput("correlationTable"),
         plotOutput("MantelTest")
       )
@@ -420,48 +426,6 @@ server <- function(input, output, session) {
     
     rownames(similarityMatrix)<-colnames(similarityMatrix)
     
-    if(input$method=="Linear Kernel" || input$method=="Polynomial Kernel" || input$method=="Gaussian Kernel" || input$method=="Arc-Cosine Kernel" || input$method=="MDS" || input$method=="DCA"){
-      # Assuming similarityMatrix is a numeric matrix
-      diag_vals <- diag(similarityMatrix)
-      
-      # Ensure diagonal values are non-negative
-      diag_vals <- pmax(diag_vals, 0)
-      
-      # Ensure similarityMatrix values are non-negative
-      similarityMatrix <- pmax(similarityMatrix, 0)
-      
-      # Calculate the outer product of the diagonal values
-      outer_product <- outer(diag_vals, diag_vals, pmax)
-      
-      # Perform normalization by dividing similarityMatrix by the outer product
-      similarityMatrix <- similarityMatrix / outer_product
-      
-      similarityMatrix <- ifelse(similarityMatrix<0.0000001, 0, (similarityMatrix - min(similarityMatrix)) / (max(similarityMatrix) - min(similarityMatrix)))
-      
-    }else if (input$method=="Jaccard" || input$method=="Bray-Curtis") {
-      
-      similarityMatrix <- similarityMatrix
-      
-    }else if (input$method=="Euclidean"){
-      
-      # Calculate the interquartile range for each column
-      iqr <- apply(similarityMatrix, 2, IQR)
-      
-      # Define a threshold to determine outliers (e.g., 1.5 times the IQR)
-      threshold <- 1.5
-      
-      # Identify the outliers in each column
-      outliers <- similarityMatrix > (quantile(similarityMatrix, 0.75) + threshold * iqr) | similarityMatrix < (quantile(similarityMatrix, 0.25) - threshold * iqr)
-      
-      # Replace the outliers with appropriate values (e.g., the maximum distance)
-      max_distance <- max(similarityMatrix[!outliers], na.rm = TRUE)
-      similarityMatrix[outliers] <- max_distance
-      similarityMatrix <- (similarityMatrix - min(similarityMatrix)) / (max(similarityMatrix) - min(similarityMatrix))
-      
-    }else if(input$method=="PLN")
-    {
-      similarityMatrix <- ifelse(similarityMatrix<0.0000001, 0, (similarityMatrix - min(similarityMatrix)) / (max(similarityMatrix) - min(similarityMatrix)))
-    }    
     similarityMatrix
   })
   
@@ -587,8 +551,8 @@ server <- function(input, output, session) {
         similarityMatrix <- switch(
           method,
           "Linear Kernel" = K.linear(transformedData()),
-          "Polynomial Kernel" = K.Polynomial(transformedData(),gamma=input$gamma),
-          "Gaussian Kernel" = K.Gaussian(transformedData(),gamma=input$gamma),
+          "Polynomial Kernel" = K.Polynomial(transformedData(), gamma = input$gamma),
+          "Gaussian Kernel" = K.Gaussian(transformedData(), gamma = input$gamma),
           "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
           "Bray-Curtis" = BC_fnc(transformedData()),
           "Jaccard" = JC_fnc(transformedData()),
@@ -604,40 +568,122 @@ server <- function(input, output, session) {
         similarityMatrix
       })
       
-      par(mfrow = c(length(methods), length(methods)))
+      numMethods <- length(methods)
+      numPlots <- numMethods * (numMethods - 1) / 2  # Calculate the total number of plots
       
-      for (i in 1:length(methods)) {
-        for (j in 1:length(methods)) {
-          if (i != j) {
-            # Create scatterplot
-            plot(as.vector(comparisonData[[i]]), as.vector(comparisonData[[j]]),
-                 col = "blue", pch = 16,
-                 xlab = methods[i], ylab = methods[j],
-                 main = paste("Comparison:", methods[i], "vs", methods[j]))
+      # Create a grid of plots
+      plots <- vector("list", numPlots)
+      counter <- 1
+      
+      for (i in 1:(numMethods - 1)) {
+        for (j in (i + 1):numMethods) {
+          method1 <- methods[i]
+          method2 <- methods[j]
+          
+          plot_data <- data.frame(
+            X = as.vector(comparisonData[[i]]),
+            Y = as.vector(comparisonData[[j]])
+          )
+          
+          # Convert data to numeric
+          plot_data$X <- as.numeric(plot_data$X)
+          plot_data$Y <- as.numeric(plot_data$Y)
+          
+          # Remove rows with non-numeric values
+          plot_data <- plot_data[complete.cases(plot_data), ]
+          
+          if (nrow(plot_data) > 0) {
+            p <- ggplot(plot_data, aes(x = X, y = Y)) +
+              geom_point() +
+              labs(x = method1, y = method2) +
+              theme_bw() +
+              theme(
+                axis.text = element_text(size = 12),
+                axis.title = element_text(size = 14),
+                plot.title = element_text(size = 16)
+              )
+            
+            plots[[counter]] <- p
+            counter <- counter + 1
           }
         }
       }
+      
+      # Remove NULL elements
+      plots <- plots[!sapply(plots, is.null)]
+      
+      # Print the grid of plots
+      gridExtra::grid.arrange(grobs = plots, ncol = 2)
     }
     
     selectedMatrices <- input$selectedMatrices
     
     if (length(selectedMatrices) >= 2) {
-            
+      numMatrices <- length(selectedMatrices)
+      numPlots <- numMatrices * (numMatrices - 1) / 2  # Calculate the total number of plots
       
-      par(mfrow = c(length(selectedMatrices), length(selectedMatrices)))
-      
-      for (i in 1:length(selectedMatrices)) {
-        for (j in 1:length(selectedMatrices)) {
-          if (i != j) {
-                  # Create scatterplot
-                  plot(as.vector(as.numeric(unlist(values$matrixList[[selectedMatrices[i]]]))), as.vector(as.numeric(unlist(values$matrixList[[selectedMatrices[i]]]))),
-                       col = "blue", pch = 16,
-                       xlab = selectedMatrices[i], ylab = selectedMatrices[j],
-                       main = paste("Comparison:", selectedMatrices[i], "vs", selectedMatrices[j]))
-          }
-        }
-      }
+      # Create a grid of plots
+      gridExtra::grid.arrange(
+        grobs = lapply(1:numPlots, function(i) {
+          matrix1 <- selectedMatrices[floor((2 * numMatrices - sqrt((2 * numMatrices - 1) * i)) / 2) + 1]
+          matrix2 <- selectedMatrices[i - floor((matrix1 + 1) * (matrix1 + 2) / 2)]
+          plot_data <- data.frame(
+            X = as.numeric(unlist(values$matrixList[[matrix1]])),
+            Y = as.numeric(unlist(values$matrixList[[matrix2]]))
+          )
+          p <- ggplot(plot_data, aes(x = X, y = Y)) +
+            geom_hex(color = "white", bins = "sqrt") +
+            labs(x = matrix1, y = matrix2) +
+            theme_bw() +
+            theme(
+              axis.text = element_text(size = 12),
+              axis.title = element_text(size = 14),
+              plot.title = element_text(size = 16)
+            )
+          
+          p
+        }),
+        ncol = 2  # Adjust the number of columns as desired
+      )
     }
+  })
+  
+  # Comparison of similarity matrices
+  output$comparisonCorrPlot <- renderPlot({
+    req(input$compareButtonCorrPlot)
+    
+    methods <- input$selectedMethods
+    
+    plots <- lapply(methods, function(method) {
+    similarityMatrix <- switch(
+      method,
+      "Linear Kernel" = K.linear(transformedData()),
+      "Polynomial Kernel" = K.Polynomial(transformedData(), gamma = input$gamma),
+      "Gaussian Kernel" = K.Gaussian(transformedData(), gamma = input$gamma),
+      "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
+      "Bray-Curtis" = BC_fnc(transformedData()),
+      "Jaccard" = JC_fnc(transformedData()),
+      "Euclidean" = Euc_fnc(transformedData()),
+      "MDS" = MDS_fnc(transformedData()),
+      "DCA" = DCA_fnc(transformedData()),
+      "PLN" = PLN_fnc(transformedData()),
+      stop("Invalid method selected.")
+    )
+    
+    correlationMatrix <- cor(similarityMatrix)
+    melted_data <- melt(correlationMatrix)
+    
+    ggplot(data = melted_data, aes(x = Var1, y = Var2, fill = value)) +
+      geom_tile() +
+      labs(x = "", y = "") +
+      theme_bw() +
+      ggtitle(method)  # Add the method name as the plot title
+    })
+    
+    grid <- do.call(grid.arrange, c(plots, ncol = 2))  # Adjust the number of columns as desired
+    
+    # Display the grid
+    grid
   })
   
   # Generate correlation table with Mantel test results and scatter plot
