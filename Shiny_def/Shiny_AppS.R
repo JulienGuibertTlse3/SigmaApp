@@ -342,7 +342,7 @@ ui <- navbarPage(
         actionButton("MantelTest", "Mantel Test")
       ),
       mainPanel(
-        plotOutput("comparisonPlot"),
+        plotOutput("comparisonPlot", width = "100%", height = "600px"),
         plotOutput("comparisonCorrPlot"),
         tableOutput("correlationTable"),
         plotOutput("MantelTest")
@@ -412,8 +412,22 @@ server <- function(input, output, session) {
     similarityMatrix <- switch(
       method,
       "Linear Kernel" = K.linear(transformedDataValue),
-      "Polynomial Kernel" = K.Polynomial(transformedDataValue,gamma=input$gamma),
-      "Gaussian Kernel" = K.Gaussian(transformedDataValue,gamma=input$gamma),
+      "Polynomial Kernel" = {
+        if (is.null(input$gamma)) {
+          gamma_val <- 1 / data_dims$cols
+        } else {
+          gamma_val <- input$gamma
+        }
+        K.Polynomial(transformedDataValue, gamma = gamma_val)
+      },
+      "Gaussian Kernel" = {
+        if (is.null(input$gamma)) {
+          gamma_val <- 1 / data_dims$cols
+        } else {
+          gamma_val <- input$gamma
+        }
+        K.Gaussian(transformedDataValue, gamma = gamma_val)
+      },
       "Arc-Cosine Kernel" = K.AK1_Final(transformedDataValue),
       "Bray-Curtis" = BC_fnc(transformedDataValue),
       "Jaccard" = JC_fnc(transformedDataValue),
@@ -460,8 +474,22 @@ server <- function(input, output, session) {
         similarityMatrix <- switch(
           method,
           "Linear Kernel" = K.linear(transformedData()),
-          "Polynomial Kernel" = K.Polynomial(transformedData(),gamma=input$gamma),
-          "Gaussian Kernel" = K.Gaussian(transformedData(),gamma=input$gamma),
+          "Polynomial Kernel" = {
+            if (is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Polynomial(transformedData(), gamma = gamma_val)
+          },
+          "Gaussian Kernel" = {
+            if (is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Gaussian(transformedData(), gamma = gamma_val)
+          },
           "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
           "Bray-Curtis" = BC_fnc(transformedData()),
           "Jaccard" = JC_fnc(transformedData()),
@@ -540,7 +568,6 @@ server <- function(input, output, session) {
     }
   )
   
-  # Comparison of similarity matrices
   output$comparisonPlot <- renderPlot({
     req(input$compareButtonPlot)
     
@@ -551,8 +578,22 @@ server <- function(input, output, session) {
         similarityMatrix <- switch(
           method,
           "Linear Kernel" = K.linear(transformedData()),
-          "Polynomial Kernel" = K.Polynomial(transformedData(), gamma = input$gamma),
-          "Gaussian Kernel" = K.Gaussian(transformedData(), gamma = input$gamma),
+          "Polynomial Kernel" = {
+            if (is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Polynomial(transformedData(), gamma = gamma_val)
+          },
+          "Gaussian Kernel" = {
+            if (is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Gaussian(transformedData(), gamma = gamma_val)
+          },
           "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
           "Bray-Curtis" = BC_fnc(transformedData()),
           "Jaccard" = JC_fnc(transformedData()),
@@ -594,6 +635,60 @@ server <- function(input, output, session) {
           
           if (nrow(plot_data) > 0) {
             p <- ggplot(plot_data, aes(x = X, y = Y)) +
+              geom_hex() +
+              labs(x = method1, y = method2) +
+              theme_bw() +
+              theme(
+                axis.text = element_text(size = 12),
+                axis.title = element_text(size = 14),
+                plot.title = element_text(size = 16)
+              )
+            
+            plots[[counter]] <- p
+            counter <- counter + 1
+          }
+        }
+      }
+      
+      # Arrange and display the plots
+      grid.arrange(grobs = plots, ncol = 2)
+    }
+      
+      # Remove NULL elements
+      plots <- plots[!sapply(plots, is.null)]
+      
+      # Print the grid of plots
+      gridExtra::grid.arrange(grobs = plots, ncol = 2)
+    
+    selectedMatrices <- input$selectedMatrices
+    
+    if (length(selectedMatrices) >= 2) {
+      numMatrices <- length(selectedMatrices)
+      numPlots <- numMatrices * (numMatrices - 1) / 2  # Calculate the total number of plots
+      
+      # Create a grid of plots
+      plots <- vector("list", numPlots)
+      counter <- 1
+      
+      for (i in 1:(numMatrices - 1)) {
+        for (j in (i + 1):numMatrices) {
+          method1 <- selectedMatrices[i]
+          method2 <- selectedMatrices[j]
+          
+          plot_data <- data.frame(
+            X = as.vector(as.numeric(unlist(values$matrixList[[selectedMatrices[i]]]))),
+            Y = as.vector(as.numeric(unlist(values$matrixList[[selectedMatrices[j]]])))
+          )
+          
+          # Convert data to numeric
+          plot_data$X <- as.numeric(plot_data$X)
+          plot_data$Y <- as.numeric(plot_data$Y)
+          
+          # Remove rows with non-numeric values
+          plot_data <- plot_data[complete.cases(plot_data), ]
+          
+          if (nrow(plot_data) > 0) {
+            p <- ggplot(plot_data, aes(x = X, y = Y)) +
               geom_point() +
               labs(x = method1, y = method2) +
               theme_bw() +
@@ -615,37 +710,6 @@ server <- function(input, output, session) {
       # Print the grid of plots
       gridExtra::grid.arrange(grobs = plots, ncol = 2)
     }
-    
-    selectedMatrices <- input$selectedMatrices
-    
-    if (length(selectedMatrices) >= 2) {
-      numMatrices <- length(selectedMatrices)
-      numPlots <- numMatrices * (numMatrices - 1) / 2  # Calculate the total number of plots
-      
-      # Create a grid of plots
-      gridExtra::grid.arrange(
-        grobs = lapply(1:numPlots, function(i) {
-          matrix1 <- selectedMatrices[floor((2 * numMatrices - sqrt((2 * numMatrices - 1) * i)) / 2) + 1]
-          matrix2 <- selectedMatrices[i - floor((matrix1 + 1) * (matrix1 + 2) / 2)]
-          plot_data <- data.frame(
-            X = as.numeric(unlist(values$matrixList[[matrix1]])),
-            Y = as.numeric(unlist(values$matrixList[[matrix2]]))
-          )
-          p <- ggplot(plot_data, aes(x = X, y = Y)) +
-            geom_hex(color = "white", bins = "sqrt") +
-            labs(x = matrix1, y = matrix2) +
-            theme_bw() +
-            theme(
-              axis.text = element_text(size = 12),
-              axis.title = element_text(size = 14),
-              plot.title = element_text(size = 16)
-            )
-          
-          p
-        }),
-        ncol = 2  # Adjust the number of columns as desired
-      )
-    }
   })
   
   # Comparison of similarity matrices
@@ -654,12 +718,28 @@ server <- function(input, output, session) {
     
     methods <- input$selectedMethods
     
+    if (length(methods) >= 1) {
+    
     plots <- lapply(methods, function(method) {
     similarityMatrix <- switch(
       method,
       "Linear Kernel" = K.linear(transformedData()),
-      "Polynomial Kernel" = K.Polynomial(transformedData(), gamma = input$gamma),
-      "Gaussian Kernel" = K.Gaussian(transformedData(), gamma = input$gamma),
+      "Polynomial Kernel" = {
+        if (is.null(input$gamma)) {
+          gamma_val <- 1 / data_dims$cols
+        } else {
+          gamma_val <- input$gamma
+        }
+        K.Polynomial(transformedData(), gamma = gamma_val)
+      },
+      "Gaussian Kernel" = {
+        if (is.null(input$gamma)) {
+          gamma_val <- 1 / data_dims$cols
+        } else {
+          gamma_val <- input$gamma
+        }
+        K.Gaussian(transformedData(), gamma = gamma_val)
+      },
       "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
       "Bray-Curtis" = BC_fnc(transformedData()),
       "Jaccard" = JC_fnc(transformedData()),
@@ -672,8 +752,7 @@ server <- function(input, output, session) {
     
     correlationMatrix <- cor(similarityMatrix)
     melted_data <- melt(correlationMatrix)
-    
-    ggplot(data = melted_data, aes(x = Var1, y = Var2, fill = value)) +
+    ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
       geom_tile() +
       labs(x = "", y = "") +
       theme_bw() +
@@ -684,6 +763,33 @@ server <- function(input, output, session) {
     
     # Display the grid
     grid
+    }
+    
+    selectedMatrices <- input$selectedMatrices
+    
+    if (length(selectedMatrices) >= 1) {
+
+    
+    plots <- lapply(selectedMatrices, function(matrixName) {
+      h <- unlist(values$matrixList[[matrixName]])
+      p <- matrix(h,nrow = sqrt(length(h)),ncol = sqrt(length(h)))
+      correlationMatrix <- cor(p)
+      
+      melted_data <- melt(correlationMatrix)
+      
+      ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
+        geom_tile() +
+        labs(x = "", y = "") +
+        theme_bw() +
+        ggtitle(matrixName)  # Add the method name as the plot title
+      
+    })
+
+    grid <- do.call(grid.arrange, c(plots, ncol = 2))  # Adjust the number of columns as desired
+    
+    # Display the grid
+    grid
+    }
   })
   
   # Generate correlation table with Mantel test results and scatter plot
@@ -700,8 +806,22 @@ server <- function(input, output, session) {
         similarityMatrix <- switch(
           method,
           "Linear Kernel" = K.linear(transformedDataValue),
-          "Polynomial Kernel" = K.Polynomial(transformedDataValue,gamma=input$gamma),
-          "Gaussian Kernel" = K.Gaussian(transformedDataValue,gamma=input$gamma),
+          "Polynomial Kernel" = {
+            if (is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Polynomial(transformedDataValue, gamma = gamma_val)
+          },
+          "Gaussian Kernel" = {
+            if (is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Gaussian(transformedDataValue, gamma = gamma_val)
+          },
           "Arc-Cosine Kernel" = K.AK1_Final(transformedDataValue),
           "Bray-Curtis" = BC_fnc(transformedDataValue),
           "Jaccard" = JC_fnc(transformedDataValue),
@@ -760,55 +880,64 @@ server <- function(input, output, session) {
     }
     
     
-    # selectedMatrices <- input$selectedMatrices
-    # SnumMethods <- length(selectedMatrices)
-    # 
-    # if (SnumMethods >= 2) {
-    #   
-    #   MantelTest<- matrix(nrow = SnumMethods, ncol = SnumMethods)
-    #   
-    #   for (i in 1:SnumMethods) {
-    #     for (j in 1:SnumMethods) {
-    #       if (i == j) {
-    #         correlationValue <- 1  # Set correlation value to 1 for same matrix comparison
-    #       } else {
-    #         mantelResult <- mantel(as.numeric(unlist(values$matrixList[[selectedMatrices[i]]])),
-    #                                as.numeric(unlist(values$matrixList[[selectedMatrices[j]]])), method = "pearson", permutations = 999)
-    #         correlationValue <- mantelResult$statistic
-    #       }
-    #       
-    #       MantelTest[i, j] <- correlationValue
-    #     }
-    #   }
-    #   
-    #   colnames(MantelTest) <- selectedMatrices
-    #   rownames(MantelTest) <- selectedMatrices
-    #   
-    #   # Normalize correlation values to range [0, 1]
-    #   normalizedCorrelation <- scale(c(MantelTest), center = FALSE, scale = max(MantelTest))
-    #   MantelTest <- matrix(normalizedCorrelation, nrow = SnumMethods, ncol = SnumMethods, byrow = TRUE)
-    #   
-    #   # Create scatter plot
-    #   correlationValues <- c(MantelTest)
-    #   methodPairs <- expand.grid(selectedMatrices, selectedMatrices)
-    #   
-    #   plot(1:SnumMethods, 1:SnumMethods, 
-    #        pch = 16, col = "blue", cex = correlationValues * 3,
-    #        xlim = c(0.5, SnumMethods + 0.5),
-    #        ylim = c(0.5, SnumMethods + 0.5),
-    #        xlab = "Method 1", ylab = "Method 2", main = "Mantel Test Results",
-    #        xaxt = "n", yaxt = "n")
-    #   
-    #   # Add method names as labels
-    #   axis(1, at = 1:SnumMethods, labels = selectedMatrices)
-    #   axis(2, at = 1:SnumMethods, labels = selectedMatrices, las = 2)
-    #   
-    #   # Add correlation values as labels
-    #   text(methodPairs$Var1, methodPairs$Var2, 
-    #        labels = round(correlationValues, 2),
-    #        pos = 3, cex = 0.8)
-    # }
-    
+    selectedMatrices <- input$selectedMatrices
+    SnumMethods <- length(selectedMatrices)
+
+    if (SnumMethods >= 1) {
+      MantelTest <- matrix(nrow = SnumMethods, ncol = SnumMethods)
+
+      for (i in 1:SnumMethods) {
+        for (j in 1:SnumMethods) {
+          if (i == j) {
+            correlationValue <- 1  # Set correlation value to 1 for the same matrix comparison
+          } else {
+            matrixFF1<- values$matrixList[[selectedMatrices[i]]]
+            matrix1 <- matrixFF1[[1]]
+            matrixFF2 <- values$matrixList[[selectedMatrices[j]]]
+            matrix2 <- matrixFF2[[1]]
+
+            # Extract numeric values from the matrices
+            matrix1Numeric <- as.numeric(matrix1)
+            matrix2Numeric <- as.numeric(matrix2)
+
+            # Create new matrices with the original dimensions
+            dim(matrix1Numeric) <- dim(matrix1)
+            dim(matrix2Numeric) <- dim(matrix2)
+
+            mantelResult <- mantel(matrix1Numeric, matrix2Numeric, method = "pearson", permutations = 999)
+            correlationValue <- mantelResult$statistic
+          }
+          MantelTest[i, j] <- correlationValue
+        }
+      }
+
+      colnames(MantelTest) <- selectedMatrices
+      rownames(MantelTest) <- selectedMatrices
+
+      # Normalize correlation values to the range [0, 1]
+      normalizedCorrelation <- scale(c(MantelTest), center = FALSE, scale = max(MantelTest))
+      MantelTest <- matrix(normalizedCorrelation, nrow = SnumMethods, ncol = SnumMethods, byrow = TRUE)
+
+      # Create scatter plot
+      correlationValues <- c(MantelTest)
+      methodPairs <- expand.grid(selectedMatrices, selectedMatrices)
+
+      plot(1:SnumMethods, 1:SnumMethods,
+           pch = 16, col = "blue", cex = correlationValues * 3,
+           xlim = c(0.5, SnumMethods + 0.5),
+           ylim = c(0.5, SnumMethods + 0.5),
+           xlab = "Method 1", ylab = "Method 2", main = "Mantel Test Results",
+           xaxt = "n", yaxt = "n")
+
+      # Add method names as labels
+      axis(1, at = 1:SnumMethods, labels = selectedMatrices)
+      axis(2, at = 1:SnumMethods, labels = selectedMatrices, las = 2)
+
+      # Add correlation values as labels
+      text(methodPairs$Var1, methodPairs$Var2,
+           labels = round(correlationValues, 2),
+           pos = 3, cex = 0.8)
+    }
   })
   
   observeEvent(input$updateListButton, {
