@@ -53,7 +53,12 @@ ui <- navbarPage(
           tags$h2("Linear Kernel (LK)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            tags$p("The linear kernel is a suitable choice when the microbial abundance data exhibits a linear pattern. It works well when the abundances change proportionally, allowing us to assess the heritability of relative abundance variations in a straightforward manner.",
+            tags$p("Also known as the cross product or Ross matrix, the linear kernel is a suitable choice when the microbial abundance data exhibits a linear pattern. It works well when the abundances change proportionally, allowing us to assess the heritability of relative abundance variations in a straightforward manner.",
+                   tags$br(),
+                   tags$br(),
+                   tags$strong("Ross et al., 2013:"), " ", tags$em("Metagenomic Predictions: From Microbiome to Complex Health and Environmental Phenotypes in Humans and Cattle"),
+                   tags$br(),
+                   tags$strong("Montesinos-Lopez et al., 2021:"), " ", tags$em( "A guide for kernel generalized regression methods for genomic-enabled prediction"),
                    id = "linearJustification",
                    style = "font-size:20px;")
           ),
@@ -66,7 +71,12 @@ ui <- navbarPage(
           tags$h2("Polynomial Kernel (PK)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            tags$p("The polynomial kernel is preferable when the microbial abundance data shows nonlinear relationships. It allows us to capture intricate interactions and higher-order relationships among microbial taxa, enabling a more accurate assessment of heritability values.",
+            tags$p("The polynomial kernel is preferable when the microbial abundance data shows nonlinear relationships. It allows us to capture intricate interactions and higher-order relationships among microbial taxa.",
+                   tags$br(),
+                   tags$br(),
+                   tags$strong("Montesinos-Lopez et al., 2021:")," " , tags$em("A guide for kernel generalized regression methods for genomic-enabled prediction"),
+                   tags$br(),
+                   tags$strong("He et al., 2022:"), " ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
                    id = "polynomialJustification",
                    style = "font-size:20px;")
           ),
@@ -80,6 +90,11 @@ ui <- navbarPage(
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
             tags$p("The Gaussian kernel is a suitable choice when the microbial abundance data exhibits a Gaussian-like distribution or when there are local interactions between microbial taxa. It can capture subtle variations and provide a more nuanced assessment of heritability by giving more importance to samples with similar microbial composition.",
+                   tags$br(),
+                   tags$br(),
+                   tags$strong("Montesinos-Lopez et al., 2021:")," " , tags$em("A guide for kernel generalized regression methods for genomic-enabled prediction"),
+                   tags$br(),
+                   tags$strong("He et al., 2022:"), " ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
                    id = "gaussianJustification",
                    style = "font-size:20px;")
           ),
@@ -92,7 +107,12 @@ ui <- navbarPage(
           tags$h2("Arc-Cosine Kernel (AK1)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("The arc-cosine kernel is preferred when the microbial abundance data represents relative abundances or compositional data. It effectively captures the compositional nature of the data by handling the inherent constraints of proportions. This kernel is suitable for assessing heritability values in cases where the relative changes in abundance are of interest.",
+            p("The arc-cosine kernel is preferred when the microbial abundance data represents relative abundances or compositional data. It effectively captures the compositional nature of the data by handling the inherent constraints of proportions.",
+              tags$br(),
+              tags$br(),
+              tags$strong("Montesinos-Lopez et al., 2021:")," " , tags$em("A guide for kernel generalized regression methods for genomic-enabled prediction"),
+              tags$br(),
+              tags$strong("He et al., 2022:"), " ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
               id = "arcCosineJustification",
               style = "font-size:20px;")
           ),
@@ -106,6 +126,9 @@ ui <- navbarPage(
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
             tags$p("The Poisson Log Normal (PLN) method can be used to analyze microbial abundance data, whether it is relative or not, due to its ability to address two key characteristics of such data: count-based nature and overdispersion.",
+                   tags$br(),
+                   tags$br(),
+                   tags$strong("Chiquet et al., 2021:"), " ", tags$em("The Poisson-Lognormal Model as a Versatile Framework for the Joint Analysis of Species Abundances"),
                    id = "PLNJustification",
                    style = "font-size:20px;")
           ),
@@ -118,7 +141,12 @@ ui <- navbarPage(
           tags$h2("Jaccard",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("The Jaccard distance is commonly used to analyze microbial abundance data, whether it's relative or absolute, due to its simplicity and robustness. It compares the presence or absence of microbial species between samples, disregarding abundance levels, making it suitable for diverse datasets. By utilizing the Jaccard distance, researchers can assess similarities, explore community structure, and investigate factors like heritability that influence microbial abundance patterns.",
+            p("The Jaccard distance is commonly used to analyze microbial abundance data, whether it's relative or absolute, due to its simplicity and robustness. It compares the presence or absence of microbial species between samples, disregarding abundance levels, making it suitable for diverse datasets. Not recommended to treat compositional data.",
+              tags$br(),
+              tags$br(),
+              tags$strong("Dixon et al., 2003:"), " ", tags$em("VEGAN, a package of R functions for community ecology"),
+              tags$br(),
+              tags$strong("Gloor et al., 2017:"), " ", tags$em("Microbiome Datasets Are Compositional: And This Is Not Optional"),
               id = "jaccardJustification",
               style = "font-size:20px;")
           ),
@@ -131,7 +159,12 @@ ui <- navbarPage(
           tags$h2("Bray-Curtis",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("The Bray-Curtis distance is a valuable metric for treating and analyzing microbial abundance data due to its ability to capture both the presence/absence and relative abundance of microbial species. It provides a quantitative measure of compositional dissimilarity between samples, allowing for meaningful comparisons and clustering analysis. By utilizing the Bray-Curtis distance, researchers can gain insights into the genetic influence and heritability of microbial communities, aiding in the understanding of their dynamics and ecological relationships.",
+            p("The Bray-Curtis distance is a valuable metric for treating and analyzing microbial abundance data due to its ability to capture both the presence/absence and relative abundance of microbial species. Not recommended to treat compositional data.",
+              tags$br(),
+              tags$br(),
+              tags$strong("Dixon et al., 2003:"), " ", tags$em("VEGAN, a package of R functions for community ecology"),
+              tags$br(),
+              tags$strong("Gloor et al., 2017:"), " ", tags$em("Microbiome Datasets Are Compositional: And This Is Not Optional"),
               id = "bcJustification",
               style = "font-size:20px;")
           ),
@@ -145,6 +178,11 @@ ui <- navbarPage(
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
             p("The Aitchison distance should be used to treat and analyze microbial abundance data for three key reasons. First, microbial abundance data is compositional, meaning the abundance of one species is dependent on others, and the Aitchison distance accounts for this constraint. Second, traditional distance measures like Euclidean distance are unsuitable for compositional data as they ignore the closure constraint. Finally, the Aitchison distance enables meaningful comparisons and dissimilarity analysis between microbial samples, allowing for the exploration of genetic factors and heritability in microbial abundance variations.",
+              tags$br(),
+              tags$br(),
+              tags$strong("Gloor et al., 2017:"), " ", tags$em("Microbiome Datasets Are Compositional: And This Is Not Optional"),
+              tags$br(),
+              tags$strong("Greenacre et al., 2022:")," ", tags$em("Aitchison's Compositional Data Analysis 40 Years On: A Reappraisal"),
               id = "aitJustification",
               style = "font-size:20px;")
           ),
@@ -157,7 +195,10 @@ ui <- navbarPage(
           tags$h2("MultiDimensionalScaling (MDS)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("MDS (Multidimensional Scaling) should be used to treat and analyze microbial abundance data because it allows for the visualization of similarities or dissimilarities between samples based on their microbial composition, providing a comprehensive overview of the dataset. MDS reduces the dimensionality of the data while preserving pairwise distances, enabling the identification of patterns, clusters, and gradients in the microbial communities. This approach helps uncover potential factors driving microbial composition differences and facilitates further analysis, including the assessment of heritability values.",
+            p("MDS (Multidimensional Scaling) should be used to treat and analyze microbial abundance data because it allows for the visualization of similarities or dissimilarities between samples based on their microbial composition, providing a comprehensive overview of the dataset. MDS reduces the dimensionality of the data while preserving pairwise distances, it exacerbates discrimination between samples and/or group of samples.",
+              tags$br(),
+              tags$br(),
+              tags$strong("He et al., 2022:")," ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
               id = "mdsJustification",
               style = "font-size:20px;")
           ),
@@ -170,7 +211,10 @@ ui <- navbarPage(
           tags$h2("Detrended Correpondence Analysis (DCA)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("DCA (Detrended Correspondence Analysis) is valuable for analyzing microbial abundance data due to its ability to capture complex nonlinear relationships or gradients in the dataset. By decomposing the variance in the data, DCA reveals the main trends or gradients present in the microbial communities, allowing for the interpretation of underlying patterns. DCA provides a visual representation of the structure of microbial composition, helping identify associations between taxa and specific environmental or biological factors and aiding in the assessment of heritability values.",
+            p("DCA (Detrended Correspondence Analysis) is valuable for analyzing microbial abundance data due to its ability to capture complex nonlinear relationships or gradients in the dataset. By decomposing the variance in the data, DCA reveals the main trends or gradients present in the microbial communities, allowing for the interpretation of underlying patterns. It also exacerbates discrimination between samples and/or group of samples.",
+              tags$br(),
+              tags$br(),
+              tags$strong("He et al., 2022:")," ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
               id = "dcaJustification",
               style = "font-size:20px;")
           ),
@@ -219,28 +263,28 @@ ui <- navbarPage(
           tags$p("n*p dataframe needed as input file (n=sample, p=OTUs/taxa)", style = "font-size: 14px;")
         ),
         tags$style(HTML("
-        .custom-file-upload {
-          display: inline-block;
-          padding: 6px 12px;
-          cursor: pointer;
-          font-size: 16px;
-          line-height: 1.42857143;
-          text-align: center;
-          white-space: nowrap;
-          vertical-align: middle;
-          border: 0px solid #ccc;
-          border-radius: 4px;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-          background-color: #f5f5f5;
-          color: #333;
-        }
-        .custom-file-upload input[type='file'] {
-          display: none;
-        }
-      ")),
+      .custom-file-upload {
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        border: 0px solid #ccc;
+        border-radius: 4px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-color: #f5f5f5;
+        color: #333;
+      }
+      .custom-file-upload input[type='file'] {
+        display: none;
+      }
+    ")),
         div(
           class = "custom-file-upload",
           fileInput("datafile", label = NULL, accept = ".csv")
@@ -278,7 +322,28 @@ ui <- navbarPage(
         verbatimTextOutput("NmatrixListOutput"),
         verbatimTextOutput("GmatrixListOutput")
       )
-    )
+    ),
+    tags$script(HTML('
+    $(document).ready(function() {
+      var disableImputation = function() {
+        var selectedMethod = $("#method").val();
+        var imputationInput = $("#imputation");
+        
+        if (selectedMethod === "Jaccard") {
+          imputationInput.val("None");
+          imputationInput.prop("disabled", true);
+        } else {
+          imputationInput.prop("disabled", false);
+        }
+      };
+      
+      disableImputation();
+      
+      $("#method").change(function() {
+        disableImputation();
+      });
+    });
+  '))
   ),
   
   # Page 4: Comparison of Similarity Matrices
