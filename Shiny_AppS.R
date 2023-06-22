@@ -1,5 +1,5 @@
 # Install required packages if not already installed
-install.packages(c("shiny", "PLNmodels", "shinyjs","DT","corrplot","cowplot","ggplot2","gridExtra","reshape2", "ape", "stats", "xtable", "plotly", "vegan", "tidyverse", "imputeTS", "imputeMissings", "compositions", "zCompositions"))
+install.packages(c("shiny", "PLNmodels", "shinyjs","DT","corrplot", "patchwork","cowplot","ggplot2","gridExtra","reshape2", "ape", "stats", "xtable", "plotly", "vegan", "tidyverse", "imputeTS", "imputeMissings", "compositions", "zCompositions"))
 
 library(shiny)
 library(ape)
@@ -20,6 +20,7 @@ library(shinyjs)
 library(ggplot2)
 library(gridExtra)
 library(PLNmodels)
+library(patchwork)
 source(file = 'R_func.R')
 
 
@@ -53,12 +54,16 @@ ui <- navbarPage(
           tags$h2("Linear Kernel (LK)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            tags$p("Also known as the cross product or Ross matrix, the linear kernel is a suitable choice when the microbial abundance data exhibits a linear pattern. It works well when the abundances change proportionally, allowing us to assess the heritability of relative abundance variations in a straightforward manner.",
+            tags$p("Also known as the cross product or Ross matrix, the linear kernel is a suitable choice when the data exhibits a linear pattern. It works well when the data change proportionally.",
                    tags$br(),
                    tags$br(),
                    tags$strong("Ross et al., 2013:"), " ", tags$em("Metagenomic Predictions: From Microbiome to Complex Health and Environmental Phenotypes in Humans and Cattle"),
                    tags$br(),
+                   tags$strong(tags$a("https://doi.org/10.1371/journal.pone.0073056", href = "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0073056")),
+                   tags$br(),
                    tags$strong("Montesinos-Lopez et al., 2021:"), " ", tags$em( "A guide for kernel generalized regression methods for genomic-enabled prediction"),
+                   tags$br(),
+                   tags$strong(tags$a("https://doi.org/10.1038/s41437-021-00412-1", href = "https://www.nature.com/articles/s41437-021-00412-1")),
                    id = "linearJustification",
                    style = "font-size:20px;")
           ),
@@ -71,12 +76,16 @@ ui <- navbarPage(
           tags$h2("Polynomial Kernel (PK)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            tags$p("The polynomial kernel is preferable when the microbial abundance data shows nonlinear relationships. It allows us to capture intricate interactions and higher-order relationships among microbial taxa.",
+            tags$p("The polynomial kernel is preferable when the data shows nonlinear relationships. It allows us to capture intricate interactions and higher-order relationships among features.",
                    tags$br(),
                    tags$br(),
                    tags$strong("Montesinos-Lopez et al., 2021:")," " , tags$em("A guide for kernel generalized regression methods for genomic-enabled prediction"),
                    tags$br(),
+                   tags$strong(tags$a("https://doi.org/10.1038/s41437-021-00412-1", href = "https://www.nature.com/articles/s41437-021-00412-1")),
+                   tags$br(),
                    tags$strong("He et al., 2022:"), " ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
+                   tags$br(),
+                   tags$strong(tags$a("https://doi.org/10.1093/jas/skac231", href = "https://academic.oup.com/jas/article/100/9/skac231/6623959?login=true")),
                    id = "polynomialJustification",
                    style = "font-size:20px;")
           ),
@@ -89,12 +98,16 @@ ui <- navbarPage(
           tags$h2("Gaussian Kernel (GK)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            tags$p("The Gaussian kernel is a suitable choice when the microbial abundance data exhibits a Gaussian-like distribution or when there are local interactions between microbial taxa. It can capture subtle variations and provide a more nuanced assessment of heritability by giving more importance to samples with similar microbial composition.",
+            tags$p("The Gaussian kernel is a suitable choice when the data exhibits a Gaussian-like distribution or when there are local interactions between features. It can capture subtle variations and provide a more nuanced assessment of heritability by giving more importance to samples with similar composition.",
                    tags$br(),
                    tags$br(),
                    tags$strong("Montesinos-Lopez et al., 2021:")," " , tags$em("A guide for kernel generalized regression methods for genomic-enabled prediction"),
                    tags$br(),
+                   tags$strong(tags$a("https://doi.org/10.1038/s41437-021-00412-1", href = "https://www.nature.com/articles/s41437-021-00412-1")),
+                   tags$br(),
                    tags$strong("He et al., 2022:"), " ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
+                   tags$br(),
+                   tags$strong(tags$a("https://doi.org/10.1093/jas/skac231", href = "https://academic.oup.com/jas/article/100/9/skac231/6623959?login=true")),
                    id = "gaussianJustification",
                    style = "font-size:20px;")
           ),
@@ -107,12 +120,16 @@ ui <- navbarPage(
           tags$h2("Arc-Cosine Kernel (AK1)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("The arc-cosine kernel is preferred when the microbial abundance data represents relative abundances or compositional data. It effectively captures the compositional nature of the data by handling the inherent constraints of proportions.",
+            p("The arc-cosine kernel is preferred when the data represents relative abundances or compositional data. It effectively captures the compositional nature of the data by handling the inherent constraints of proportions.",
               tags$br(),
               tags$br(),
               tags$strong("Montesinos-Lopez et al., 2021:")," " , tags$em("A guide for kernel generalized regression methods for genomic-enabled prediction"),
               tags$br(),
+              tags$strong(tags$a("https://doi.org/10.1038/s41437-021-00412-1", href = "https://www.nature.com/articles/s41437-021-00412-1")),
+              tags$br(),
               tags$strong("He et al., 2022:"), " ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
+              tags$br(),
+              tags$strong(tags$a("https://doi.org/10.1093/jas/skac231", href = "https://academic.oup.com/jas/article/100/9/skac231/6623959?login=true")),
               id = "arcCosineJustification",
               style = "font-size:20px;")
           ),
@@ -125,10 +142,12 @@ ui <- navbarPage(
           tags$h2("Poisson Log Normal method (PLN)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            tags$p("The Poisson Log Normal (PLN) method can be used to analyze microbial abundance data, whether it is relative or not, due to its ability to address two key characteristics of such data: count-based nature and overdispersion.",
+            tags$p("The Poisson Log Normal (PLN) method can be used to analyze data, whether it is relative or not, due to its ability to address two key characteristics of such data: count-based nature and overdispersion.",
                    tags$br(),
                    tags$br(),
                    tags$strong("Chiquet et al., 2021:"), " ", tags$em("The Poisson-Lognormal Model as a Versatile Framework for the Joint Analysis of Species Abundances"),
+                   tags$br(),
+                   tags$strong(tags$a("https://doi.org/10.3389/fevo.2021.588292", href = "https://www.frontiersin.org/articles/10.3389/fevo.2021.588292/full")),
                    id = "PLNJustification",
                    style = "font-size:20px;")
           ),
@@ -141,12 +160,16 @@ ui <- navbarPage(
           tags$h2("Jaccard",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("The Jaccard distance is commonly used to analyze microbial abundance data, whether it's relative or absolute, due to its simplicity and robustness. It compares the presence or absence of microbial species between samples, disregarding abundance levels, making it suitable for diverse datasets. Not recommended to treat compositional data.",
+            p("The Jaccard distance is commonly used to analyze data, whether it's relative or absolute, due to its simplicity and robustness. It compares the presence or absence of features between samples, disregarding abundance levels, making it suitable for diverse datasets. Not recommended to treat compositional data.",
               tags$br(),
               tags$br(),
               tags$strong("Dixon et al., 2003:"), " ", tags$em("VEGAN, a package of R functions for community ecology"),
               tags$br(),
+              tags$strong(tags$a("https://doi.org/10.1016/S0377-8401(03)00204-9", href = "https://www.sciencedirect.com/science/article/pii/S0377840103002049?via%3Dihub")),
+              tags$br(),
               tags$strong("Gloor et al., 2017:"), " ", tags$em("Microbiome Datasets Are Compositional: And This Is Not Optional"),
+              tags$br(),
+              tags$strong(tags$a("https://doi.org/10.3389/fmicb.2017.02224", href = "https://www.frontiersin.org/articles/10.3389/fmicb.2017.02224/full")),
               id = "jaccardJustification",
               style = "font-size:20px;")
           ),
@@ -159,12 +182,16 @@ ui <- navbarPage(
           tags$h2("Bray-Curtis",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("The Bray-Curtis distance is a valuable metric for treating and analyzing microbial abundance data due to its ability to capture both the presence/absence and relative abundance of microbial species. Not recommended to treat compositional data.",
+            p("The Bray-Curtis distance is a valuable metric to treat and analyze data due to its ability to capture both the presence/absence and relative abundance of features. Not recommended to treat compositional data.",
               tags$br(),
               tags$br(),
               tags$strong("Dixon et al., 2003:"), " ", tags$em("VEGAN, a package of R functions for community ecology"),
               tags$br(),
+              tags$strong(tags$a("https://doi.org/10.1016/S0377-8401(03)00204-9", href = "https://www.sciencedirect.com/science/article/pii/S0377840103002049?via%3Dihub")),
+              tags$br(),
               tags$strong("Gloor et al., 2017:"), " ", tags$em("Microbiome Datasets Are Compositional: And This Is Not Optional"),
+              tags$br(),
+              tags$strong(tags$a("https://doi.org/10.3389/fmicb.2017.02224", href = "https://www.frontiersin.org/articles/10.3389/fmicb.2017.02224/full")),
               id = "bcJustification",
               style = "font-size:20px;")
           ),
@@ -174,15 +201,19 @@ ui <- navbarPage(
       fluidRow(
         column(
           width = 10,
-          tags$h2("Aitchison",
+          tags$h2("Euclidean/Aitchison",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("The Aitchison distance should be used to treat and analyze microbial abundance data for three key reasons. First, microbial abundance data is compositional, meaning the abundance of one species is dependent on others, and the Aitchison distance accounts for this constraint. Second, traditional distance measures like Euclidean distance are unsuitable for compositional data as they ignore the closure constraint. Finally, the Aitchison distance enables meaningful comparisons and dissimilarity analysis between microbial samples, allowing for the exploration of genetic factors and heritability in microbial abundance variations.",
+            p("The Euclidean distance is the most basic distance. When used on CLR transformed data, it is called Aitchison distance. The Aitchison distance is known to handle compositional data, meaning data in which the abundance of one species is dependent on others, and the Aitchison distance accounts for this constraint. It also enables meaningful comparisons and dissimilarity analysis between microbial samples, allowing for the exploration of genetic factors and heritability in microbial abundance variations.",
               tags$br(),
               tags$br(),
               tags$strong("Gloor et al., 2017:"), " ", tags$em("Microbiome Datasets Are Compositional: And This Is Not Optional"),
               tags$br(),
+              tags$strong(tags$a("https://doi.org/10.3389/fmicb.2017.02224", href = "https://www.frontiersin.org/articles/10.3389/fmicb.2017.02224/full")),
+              tags$br(),
               tags$strong("Greenacre et al., 2022:")," ", tags$em("Aitchison's Compositional Data Analysis 40 Years On: A Reappraisal"),
+              tags$br(),
+              tags$strong(tags$a("https://doi.org/10.48550/arXiv.2201.05197", href = "https://arxiv.org/abs/2201.05197")),
               id = "aitJustification",
               style = "font-size:20px;")
           ),
@@ -195,10 +226,12 @@ ui <- navbarPage(
           tags$h2("MultiDimensionalScaling (MDS)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("MDS (Multidimensional Scaling) should be used to treat and analyze microbial abundance data because it allows for the visualization of similarities or dissimilarities between samples based on their microbial composition, providing a comprehensive overview of the dataset. MDS reduces the dimensionality of the data while preserving pairwise distances, it exacerbates discrimination between samples and/or group of samples.",
+            p("MDS (Multidimensional Scaling) is used to treat and analyze data because it allows for the visualization of similarities or dissimilarities between samples based on their microbial composition, providing a comprehensive overview of the dataset. MDS reduces the dimensionality of the data while preserving pairwise distances, it exacerbates discrimination between samples and/or group of samples.",
               tags$br(),
               tags$br(),
-              tags$strong("He et al., 2022:")," ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
+              tags$strong("He et al., 2022:"), " ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
+              tags$br(),
+              tags$strong(tags$a("https://doi.org/10.1093/jas/skac231", href = "https://academic.oup.com/jas/article/100/9/skac231/6623959?login=true")),
               id = "mdsJustification",
               style = "font-size:20px;")
           ),
@@ -211,10 +244,12 @@ ui <- navbarPage(
           tags$h2("Detrended Correpondence Analysis (DCA)",
                   style = "font-size:26px; text-decoration:underline;"),
           shinyjs::hidden(
-            p("DCA (Detrended Correspondence Analysis) is valuable for analyzing microbial abundance data due to its ability to capture complex nonlinear relationships or gradients in the dataset. By decomposing the variance in the data, DCA reveals the main trends or gradients present in the microbial communities, allowing for the interpretation of underlying patterns. It also exacerbates discrimination between samples and/or group of samples.",
+            p("DCA (Detrended Correspondence Analysis) is used to analyze data due to its ability to capture complex nonlinear relationships or gradients in the dataset. By decomposing the variance in the data, DCA reveals the main trends or gradients present in the microbial communities, allowing for the interpretation of underlying patterns. It also exacerbates discrimination between samples and/or group of samples.",
               tags$br(),
               tags$br(),
-              tags$strong("He et al., 2022:")," ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
+              tags$strong("He et al., 2022:"), " ", tags$em("Exploring methods to summarize gut microbiota composition for microbiability estimation and phenotypic prediction in swine"),
+              tags$br(),
+              tags$strong(tags$a("https://doi.org/10.1093/jas/skac231", href = "https://academic.oup.com/jas/article/100/9/skac231/6623959?login=true")),
               id = "dcaJustification",
               style = "font-size:20px;")
           ),
@@ -254,6 +289,7 @@ ui <- navbarPage(
   ),
   
   # Page 3: Upload Data and Generate Similarity Matrix
+  
   tabPanel(
     "Generate Matrix",
     sidebarLayout(
@@ -313,7 +349,8 @@ ui <- navbarPage(
         actionButton("generateButton", "Generate Similarity Matrix"),
         downloadButton("exportButton", "Export Matrix", class = "download-button"),
         actionButton("updateListButton", "Update Matrix List"),
-        textInput("matrixName", label = "Matrix Name")
+        textInput("matrixName", label = "Matrix Name"),
+        uiOutput('background_change')
       ),
       mainPanel(
         tableOutput("similarityTable"),
@@ -322,28 +359,7 @@ ui <- navbarPage(
         verbatimTextOutput("NmatrixListOutput"),
         verbatimTextOutput("GmatrixListOutput")
       )
-    ),
-    tags$script(HTML('
-    $(document).ready(function() {
-      var disableImputation = function() {
-        var selectedMethod = $("#method").val();
-        var imputationInput = $("#imputation");
-        
-        if (selectedMethod === "Jaccard") {
-          imputationInput.val("None");
-          imputationInput.prop("disabled", true);
-        } else {
-          imputationInput.prop("disabled", false);
-        }
-      };
-      
-      disableImputation();
-      
-      $("#method").change(function() {
-        disableImputation();
-      });
-    });
-  '))
+    )
   ),
   
   # Page 4: Comparison of Similarity Matrices
@@ -401,16 +417,35 @@ ui <- navbarPage(
             multiple = TRUE,
             options = list(maxOptions = 10, plugins = list("remove_button"))
           ),
-        actionButton("compareButtonPlot", "Compare Similarity Matrices as Plot"),
         actionButton("compareButtonCorrPlot", "Compare Similarity Matrices as CorrPlot"),
-        actionButton("compareButtonTable", "Compare Similarity Matrices as Table"),
-        actionButton("MantelTest", "Mantel Test")
+        actionButton("compareButtonPlot", "Compare Similarity Matrices as Plot"),
+        actionButton("compareButtonTable", "Compare Similarity Matrices as Table")
       ),
       mainPanel(
-        plotOutput("comparisonPlot", width = "100%", height = "600px"),
-        plotOutput("comparisonCorrPlot"),
-        tableOutput("correlationTable"),
-        plotOutput("MantelTest")
+        fluidRow(
+          class = "myRow1",
+          column(
+            width = 6,
+            plotOutput("comparisonCorrPlot", width = "200%", height = "800px")
+          ),
+          tags$head(tags$style("
+      .myRow1{height:800px;}"))
+        ),
+        fluidRow(
+          column(
+            class = "myRow2",
+            width = 6,
+            plotOutput("comparisonPlot", width = "200%", height = "1000px")
+          ),
+          tags$head(tags$style("
+      .myRow2{height:1000px;}"))
+        ),
+        fluidRow(
+          column(
+            width = 6,
+            tableOutput("correlationTable")
+          )
+        )
       )
     )
   )
@@ -540,7 +575,7 @@ server <- function(input, output, session) {
           method,
           "Linear Kernel" = K.linear(transformedData()),
           "Polynomial Kernel" = {
-            if (is.null(input$gamma)) {
+            if (!exists("input$gamma") || is.null(input$gamma)) {
               gamma_val <- 1 / data_dims$cols
             } else {
               gamma_val <- input$gamma
@@ -548,7 +583,7 @@ server <- function(input, output, session) {
             K.Polynomial(transformedData(), gamma = gamma_val)
           },
           "Gaussian Kernel" = {
-            if (is.null(input$gamma)) {
+            if (!exists("input$gamma") || is.null(input$gamma)) {
               gamma_val <- 1 / data_dims$cols
             } else {
               gamma_val <- input$gamma
@@ -569,6 +604,7 @@ server <- function(input, output, session) {
         similarityMatrix
       })
       
+      
       correlationTable <- matrix(nrow = numMethods, ncol = numMethods)
       
       for (i in 1:numMethods) {
@@ -578,14 +614,23 @@ server <- function(input, output, session) {
         }
       }
       
+      # Perform Mantel test
+      pvalues <- matrix(nrow = numMethods, ncol = numMethods)
+      
+      for (i in 1:numMethods) {
+        for (j in 1:numMethods) {
+          if (i == j) {
+            pvalues[i, j] <- 1  # Set diagonal elements to 1
+          } else {
+            mantelTest <- mantel(similarityMatrices[[i]], similarityMatrices[[j]], method = "pearson", permutations = 999)
+            pvalues[i, j] <- mantelTest$signif
+            print(pvalues)
+          }
+        }
+      }
+      
       colnames(correlationTable) <- methods
       rownames(correlationTable) <- methods
-      correlationTableDF <- as.data.frame(correlationTable)  # Convert to data frame
-      correlationTableDF$RowNames <- rownames(correlationTableDF)  # Add row names as a column
-      rownames(correlationTableDF) <- NULL  # Remove row names from the data frame
-      correlationTableDF <- correlationTableDF[, c("RowNames", colnames(correlationTableDF))]  # Reorder columns to have row names as the first column
-      correlationTableDF<-correlationTableDF[,-length(correlationTableDF)]
-      correlationTableDF
     }
     
     selectedMatrices <- input$selectedMatrices
@@ -603,18 +648,56 @@ server <- function(input, output, session) {
           correlationTable[i, j] <- correlationValue
         }
       }
+        # Perform Mantel test
+        pvalues <- matrix(nrow = SnumMethods, ncol = SnumMethods)
+        
+        for (i in 1:SnumMethods) {
+          for (j in 1:SnumMethods) {
+            if (i == j) {
+              pvalues[i, j] <- 1  # Set correlation value to 1 for the same matrix comparison
+            } else {
+              matrixFF1<- values$matrixList[[selectedMatrices[i]]]
+              matrix1 <- matrixFF1[[1]]
+              matrixFF2 <- values$matrixList[[selectedMatrices[j]]]
+              matrix2 <- matrixFF2[[1]]
+              
+              # Extract numeric values from the matrices
+              matrix1Numeric <- as.numeric(matrix1)
+              matrix2Numeric <- as.numeric(matrix2)
+              
+              # Create new matrices with the original dimensions
+              dim(matrix1Numeric) <- dim(matrix1)
+              dim(matrix2Numeric) <- dim(matrix2)
+              
+              mantelResult <- mantel(matrix1Numeric, matrix2Numeric, method = "pearson", permutations = 999)
+              pvalues[i, j] <- mantelResult$signif
+            }
+          }
+        }
       
       colnames(correlationTable) <- selectedMatrices
       rownames(correlationTable) <- selectedMatrices
-      correlationTableDF <- as.data.frame(correlationTable)
-      correlationTableDF$RowNames <- rownames(correlationTableDF)
-      rownames(correlationTableDF) <- NULL
-      correlationTableDF <- correlationTableDF[, c("RowNames", colnames(correlationTableDF))]
-      correlationTableDF <- correlationTableDF[, -length(correlationTableDF)]
+      
     }
     
+    # Create a new correlation table with p-values
+    correlationTableWithP <- correlationTable
+    
+    # Add "*" to indicate significance if p-value is below threshold (e.g., 0.05)
+    correlationTableWithP[pvalues < 0.05] <- paste0(correlationTable[pvalues < 0.05], "*")
+    
+    
+    correlationTableDF <- as.data.frame(correlationTableWithP)  # Convert to data frame
+    correlationTableDF$RowNames <- rownames(correlationTableDF)  # Add row names as a column
+    rownames(correlationTableDF) <- NULL  # Remove row names from the data frame
+    correlationTableDF <- correlationTableDF[, c("RowNames", colnames(correlationTableDF))]  # Reorder columns to have row names as the first column
+    
+    correlationTableDF <- correlationTableDF[, !grepl("RowNames.1", colnames(correlationTableDF))]
+
     correlationTableDF
+    
   })
+  
   
   # Generate text output
   output$text <- renderText({
@@ -637,6 +720,7 @@ server <- function(input, output, session) {
     req(input$compareButtonPlot)
     
     methods <- input$selectedMethods
+    selectedMatrices <- input$selectedMatrices
     
     if (length(methods) >= 2) {
       comparisonData <- lapply(methods, function(method) {
@@ -644,7 +728,7 @@ server <- function(input, output, session) {
           method,
           "Linear Kernel" = K.linear(transformedData()),
           "Polynomial Kernel" = {
-            if (is.null(input$gamma)) {
+            if (!exists("input$gamma") || is.null(input$gamma)) {
               gamma_val <- 1 / data_dims$cols
             } else {
               gamma_val <- input$gamma
@@ -652,7 +736,7 @@ server <- function(input, output, session) {
             K.Polynomial(transformedData(), gamma = gamma_val)
           },
           "Gaussian Kernel" = {
-            if (is.null(input$gamma)) {
+            if (!exists("input$gamma") || is.null(input$gamma)) {
               gamma_val <- 1 / data_dims$cols
             } else {
               gamma_val <- input$gamma
@@ -703,11 +787,14 @@ server <- function(input, output, session) {
               geom_hex() +
               labs(x = method1, y = method2) +
               theme_bw() +
-              theme(
-                axis.text = element_text(size = 12),
-                axis.title = element_text(size = 14),
-                plot.title = element_text(size = 16)
-              )
+              theme(plot.margin = margin(5, 5, 5, 5, "pt"),
+                    plot.background = element_rect(fill = "white"),
+                    panel.background = element_rect(fill = "white"),
+                    aspect.ratio = 1,
+                    plot.title = element_text(size = 14),
+                    axis.text = element_text(size = 10),
+                    axis.title = element_text(size = 12))+
+              scale_fill_gradient(low = "lightblue", high = "darkblue")
             
             plots[[counter]] <- p
             counter <- counter + 1
@@ -717,16 +804,17 @@ server <- function(input, output, session) {
       
       # Arrange and display the plots
       grid.arrange(grobs = plots, ncol = 2)
-    }
       
       # Remove NULL elements
+      
       plots <- plots[!sapply(plots, is.null)]
       
       # Print the grid of plots
-      gridExtra::grid.arrange(grobs = plots, ncol = 2)
-    
-    selectedMatrices <- input$selectedMatrices
-    
+      gridExtra::grid.arrange(grobs = plots, ncol = 3)
+    }
+      
+
+
     if (length(selectedMatrices) >= 2) {
       numMatrices <- length(selectedMatrices)
       numPlots <- numMatrices * (numMatrices - 1) / 2  # Calculate the total number of plots
@@ -734,6 +822,7 @@ server <- function(input, output, session) {
       # Create a grid of plots
       plots <- vector("list", numPlots)
       counter <- 1
+      
       
       for (i in 1:(numMatrices - 1)) {
         for (j in (i + 1):numMatrices) {
@@ -754,14 +843,17 @@ server <- function(input, output, session) {
           
           if (nrow(plot_data) > 0) {
             p <- ggplot(plot_data, aes(x = X, y = Y)) +
-              geom_point() +
+              geom_hex() +
               labs(x = method1, y = method2) +
               theme_bw() +
-              theme(
-                axis.text = element_text(size = 12),
-                axis.title = element_text(size = 14),
-                plot.title = element_text(size = 16)
-              )
+              theme(plot.margin = margin(5, 5, 5, 5, "pt"),
+                    plot.background = element_rect(fill = "white"),
+                    panel.background = element_rect(fill = "white"),
+                    aspect.ratio = 1,
+                    plot.title = element_text(size = 14),
+                    axis.text = element_text(size = 10),
+                    axis.title = element_text(size = 12))+
+              scale_fill_gradient(low = "lightblue", high = "darkblue")
             
             plots[[counter]] <- p
             counter <- counter + 1
@@ -772,11 +864,16 @@ server <- function(input, output, session) {
       # Remove NULL elements
       plots <- plots[!sapply(plots, is.null)]
       
-      # Print the grid of plots
-      gridExtra::grid.arrange(grobs = plots, ncol = 2)
+      if (length(plots) > 0) {
+        # Print the grid of plots
+        gridExtra::grid.arrange(grobs = plots, ncol = 3)
+      } else {
+        # Handle case when there are no valid plots
+        print("No valid plots to display.")
+      }
     }
   })
-  
+
   # Comparison of similarity matrices
   output$comparisonCorrPlot <- renderPlot({
     req(input$compareButtonCorrPlot)
@@ -785,223 +882,93 @@ server <- function(input, output, session) {
     
     if (length(methods) >= 1) {
     
-    plots <- lapply(methods, function(method) {
-    similarityMatrix <- switch(
-      method,
-      "Linear Kernel" = K.linear(transformedData()),
-      "Polynomial Kernel" = {
-        if (is.null(input$gamma)) {
-          gamma_val <- 1 / data_dims$cols
-        } else {
-          gamma_val <- input$gamma
-        }
-        K.Polynomial(transformedData(), gamma = gamma_val)
-      },
-      "Gaussian Kernel" = {
-        if (is.null(input$gamma)) {
-          gamma_val <- 1 / data_dims$cols
-        } else {
-          gamma_val <- input$gamma
-        }
-        K.Gaussian(transformedData(), gamma = gamma_val)
-      },
-      "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
-      "Bray-Curtis" = BC_fnc(transformedData()),
-      "Jaccard" = JC_fnc(transformedData()),
-      "Euclidean" = Euc_fnc(transformedData()),
-      "MDS" = MDS_fnc(transformedData()),
-      "DCA" = DCA_fnc(transformedData()),
-      "PLN" = PLN_fnc(transformedData()),
-      stop("Invalid method selected.")
-    )
-    
-    correlationMatrix <- cor(similarityMatrix)
-    melted_data <- melt(correlationMatrix)
-    ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
-      geom_tile() +
-      labs(x = "", y = "") +
-      theme_bw() +
-      ggtitle(method)  # Add the method name as the plot title
-    })
-    
-    grid <- do.call(grid.arrange, c(plots, ncol = 2))  # Adjust the number of columns as desired
-    
-    # Display the grid
-    grid
+      
+      plots <- lapply(methods, function(method) {
+        similarityMatrix <- switch(
+          method,
+          "Linear Kernel" = K.linear(transformedData()),
+          "Polynomial Kernel" = {
+            if (!exists("input$gamma") || is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Polynomial(transformedData(), gamma = gamma_val)
+          },
+          "Gaussian Kernel" = {
+            if (!exists("input$gamma") || is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Gaussian(transformedData(), gamma = gamma_val)
+          },
+          "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
+          "Bray-Curtis" = BC_fnc(transformedData()),
+          "Jaccard" = JC_fnc(transformedData()),
+          "Euclidean" = Euc_fnc(transformedData()),
+          "MDS" = MDS_fnc(transformedData()),
+          "DCA" = DCA_fnc(transformedData()),
+          "PLN" = PLN_fnc(transformedData()),
+          stop("Invalid method selected.")
+        )
+        
+        correlationMatrix <- cor(similarityMatrix)
+        melted_data <- melt(correlationMatrix)
+        ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
+          geom_tile() +
+          labs(x = "", y = "") +
+          theme_bw() +
+          scale_fill_gradientn(colours = c("blue", "white", "red"),
+                               values = scales::rescale(c(0, 0.45, 0.5, 0.55, 1)))+
+          ggtitle(method)+  # Add the method name as the plot title 
+          theme(plot.margin = margin(5, 5, 5, 5, "pt"),
+                plot.background = element_rect(fill = "white"),
+                panel.background = element_rect(fill = "white"),
+                aspect.ratio = 1,
+                plot.title = element_text(size = 14),
+                axis.text = element_text(size = 10),
+                axis.title = element_text(size = 12))
+      })
+      
+      grid <- do.call(grid.arrange, c(plots, ncol = 3))  # Adjust the number of columns as desired
+      
+      # Display the grid
+      grid
     }
     
     selectedMatrices <- input$selectedMatrices
     
     if (length(selectedMatrices) >= 1) {
-
-    
-    plots <- lapply(selectedMatrices, function(matrixName) {
-      h <- unlist(values$matrixList[[matrixName]])
-      p <- matrix(h,nrow = sqrt(length(h)),ncol = sqrt(length(h)))
-      correlationMatrix <- cor(p)
       
-      melted_data <- melt(correlationMatrix)
       
-      ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
-        geom_tile() +
-        labs(x = "", y = "") +
-        theme_bw() +
-        ggtitle(matrixName)  # Add the method name as the plot title
-      
-    })
-
-    grid <- do.call(grid.arrange, c(plots, ncol = 2))  # Adjust the number of columns as desired
-    
-    # Display the grid
-    grid
-    }
-  })
-  
-  # Generate correlation table with Mantel test results and scatter plot
-  output$MantelTest <- renderPlot({
-    req(input$MantelTest)
-    
-    methods <- input$selectedMethods
-    numMethods <- length(methods)
-    
-    transformedDataValue <- transformedData()
-    
-    if (numMethods >= 2) {
-      similarityMatrices <- lapply(methods, function(method) {
-        similarityMatrix <- switch(
-          method,
-          "Linear Kernel" = K.linear(transformedDataValue),
-          "Polynomial Kernel" = {
-            if (is.null(input$gamma)) {
-              gamma_val <- 1 / data_dims$cols
-            } else {
-              gamma_val <- input$gamma
-            }
-            K.Polynomial(transformedDataValue, gamma = gamma_val)
-          },
-          "Gaussian Kernel" = {
-            if (is.null(input$gamma)) {
-              gamma_val <- 1 / data_dims$cols
-            } else {
-              gamma_val <- input$gamma
-            }
-            K.Gaussian(transformedDataValue, gamma = gamma_val)
-          },
-          "Arc-Cosine Kernel" = K.AK1_Final(transformedDataValue),
-          "Bray-Curtis" = BC_fnc(transformedDataValue),
-          "Jaccard" = JC_fnc(transformedDataValue),
-          "Euclidean" = Euc_fnc(transformedDataValue),
-          "MDS" = MDS_fnc(transformedDataValue),
-          "DCA" = DCA_fnc(transformedDataValue),
-          "PLN" = PLN_fnc(transformedDataValue),
-          stop("Invalid method selected.")
-        )
+      plots <- lapply(selectedMatrices, function(matrixName) {
+        h <- unlist(values$matrixList[[matrixName]])
+        p <- matrix(h,nrow = sqrt(length(h)),ncol = sqrt(length(h)))
+        correlationMatrix <- cor(p)
         
-        rownames(similarityMatrix) <- colnames(similarityMatrix)
-        similarityMatrix
+        melted_data <- melt(correlationMatrix)
+        
+        ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
+          geom_tile() +
+          labs(x = "", y = "") +
+          theme_bw() +
+          scale_fill_gradientn(colours = c("blue", "white", "red"),
+                               values = scales::rescale(c(0, 0.45, 0.5, 0.55, 1)))+
+          ggtitle(matrixName)+  # Add the method name as the plot title 
+          theme(plot.margin = margin(5, 5, 5, 5, "pt"),
+                plot.background = element_rect(fill = "white"),
+                panel.background = element_rect(fill = "white"),
+                aspect.ratio = 1,
+                plot.title = element_text(size = 14),
+                axis.text = element_text(size = 10),
+                axis.title = element_text(size = 12))
       })
       
-      MantelTest<- matrix(nrow = numMethods, ncol = numMethods)
+      grid <- do.call(grid.arrange, c(plots, ncol = 3))  # Adjust the number of columns as desired
       
-      for (i in 1:numMethods) {
-        for (j in 1:numMethods) {
-          if (i == j) {
-            correlationValue <- 1  # Set correlation value to 1 for same matrix comparison
-          } else {
-            mantelResult <- mantel(similarityMatrices[[i]], similarityMatrices[[j]], method = "pearson", permutations = 999)
-            correlationValue <- mantelResult$statistic
-          }
-          
-          MantelTest[i, j] <- correlationValue
-        }
-      }
-      
-      colnames(MantelTest) <- methods
-      rownames(MantelTest) <- methods
-      
-      # Normalize correlation values to range [0, 1]
-      normalizedCorrelation <- scale(c(MantelTest), center = FALSE, scale = max(MantelTest))
-      MantelTest <- matrix(normalizedCorrelation, nrow = numMethods, ncol = numMethods, byrow = TRUE)
-      
-      # Create scatter plot
-      correlationValues <- c(MantelTest)
-      methodPairs <- expand.grid(methods, methods)
-      
-      plot(1:numMethods, 1:numMethods, 
-           pch = 16, col = "blue", cex = correlationValues * 3,
-           xlim = c(0.5, numMethods + 0.5),
-           ylim = c(0.5, numMethods + 0.5),
-           xlab = "Method 1", ylab = "Method 2", main = "Mantel Test Results",
-           xaxt = "n", yaxt = "n")
-      
-      # Add method names as labels
-      axis(1, at = 1:numMethods, labels = methods)
-      axis(2, at = 1:numMethods, labels = methods, las = 2)
-      
-      # Add correlation values as labels
-      text(methodPairs$Var1, methodPairs$Var2, 
-           labels = round(correlationValues, 2),
-           pos = 3, cex = 0.8)
-    }
-    
-    
-    selectedMatrices <- input$selectedMatrices
-    SnumMethods <- length(selectedMatrices)
-
-    if (SnumMethods >= 1) {
-      MantelTest <- matrix(nrow = SnumMethods, ncol = SnumMethods)
-
-      for (i in 1:SnumMethods) {
-        for (j in 1:SnumMethods) {
-          if (i == j) {
-            correlationValue <- 1  # Set correlation value to 1 for the same matrix comparison
-          } else {
-            matrixFF1<- values$matrixList[[selectedMatrices[i]]]
-            matrix1 <- matrixFF1[[1]]
-            matrixFF2 <- values$matrixList[[selectedMatrices[j]]]
-            matrix2 <- matrixFF2[[1]]
-
-            # Extract numeric values from the matrices
-            matrix1Numeric <- as.numeric(matrix1)
-            matrix2Numeric <- as.numeric(matrix2)
-
-            # Create new matrices with the original dimensions
-            dim(matrix1Numeric) <- dim(matrix1)
-            dim(matrix2Numeric) <- dim(matrix2)
-
-            mantelResult <- mantel(matrix1Numeric, matrix2Numeric, method = "pearson", permutations = 999)
-            correlationValue <- mantelResult$statistic
-          }
-          MantelTest[i, j] <- correlationValue
-        }
-      }
-
-      colnames(MantelTest) <- selectedMatrices
-      rownames(MantelTest) <- selectedMatrices
-
-      # Normalize correlation values to the range [0, 1]
-      normalizedCorrelation <- scale(c(MantelTest), center = FALSE, scale = max(MantelTest))
-      MantelTest <- matrix(normalizedCorrelation, nrow = SnumMethods, ncol = SnumMethods, byrow = TRUE)
-
-      # Create scatter plot
-      correlationValues <- c(MantelTest)
-      methodPairs <- expand.grid(selectedMatrices, selectedMatrices)
-
-      plot(1:SnumMethods, 1:SnumMethods,
-           pch = 16, col = "blue", cex = correlationValues * 3,
-           xlim = c(0.5, SnumMethods + 0.5),
-           ylim = c(0.5, SnumMethods + 0.5),
-           xlab = "Method 1", ylab = "Method 2", main = "Mantel Test Results",
-           xaxt = "n", yaxt = "n")
-
-      # Add method names as labels
-      axis(1, at = 1:SnumMethods, labels = selectedMatrices)
-      axis(2, at = 1:SnumMethods, labels = selectedMatrices, las = 2)
-
-      # Add correlation values as labels
-      text(methodPairs$Var1, methodPairs$Var2,
-           labels = round(correlationValues, 2),
-           pos = 3, cex = 0.8)
+      # Display the grid
+      grid
     }
   })
   
