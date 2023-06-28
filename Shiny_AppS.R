@@ -48,7 +48,7 @@ ui <- navbarPage(
       useShinyjs(),  # Add useShinyjs()
       div(
         style="text-align:center;",
-        h1(tags$span("Method justification",
+        h1(tags$span("Method justifications",
                      style = "font-family: Times New Roman ; font-size: 42px; color: #FF0000;font-weight: 700;"))
       ),
       fluidRow(
@@ -617,21 +617,7 @@ server <- function(input, output, session) {
           correlationTable[i, j] <- round(correlationValue, digits = 3)
         }
       }
-      
-      # Perform Mantel test
-      pvalues <- matrix(nrow = numMethods, ncol = numMethods)
-      
-      for (i in 1:numMethods) {
-        for (j in 1:numMethods) {
-          if (i == j) {
-            pvalues[i, j] <- 1  # Set diagonal elements to 1
-          } else {
-            mantelTest <- mantel(similarityMatrices[[i]], similarityMatrices[[j]], method = "pearson", permutations = 999)
-            pvalues[i, j] <- mantelTest$signif
-            print(pvalues)
-          }
-        }
-      }
+
       
       colnames(correlationTable) <- methods
       rownames(correlationTable) <- methods
@@ -652,32 +638,6 @@ server <- function(input, output, session) {
           correlationTable[i, j] <- round(correlationValue, digits = 3)
         }
       }
-        # Perform Mantel test
-        pvalues <- matrix(nrow = SnumMethods, ncol = SnumMethods)
-        
-        for (i in 1:SnumMethods) {
-          for (j in 1:SnumMethods) {
-            if (i == j) {
-              pvalues[i, j] <- 1  # Set correlation value to 1 for the same matrix comparison
-            } else {
-              matrixFF1<- values$matrixList[[selectedMatrices[i]]]
-              matrix1 <- matrixFF1[[1]]
-              matrixFF2 <- values$matrixList[[selectedMatrices[j]]]
-              matrix2 <- matrixFF2[[1]]
-              
-              # Extract numeric values from the matrices
-              matrix1Numeric <- as.numeric(matrix1)
-              matrix2Numeric <- as.numeric(matrix2)
-              
-              # Create new matrices with the original dimensions
-              dim(matrix1Numeric) <- dim(matrix1)
-              dim(matrix2Numeric) <- dim(matrix2)
-              
-              mantelResult <- mantel(matrix1Numeric, matrix2Numeric, method = "pearson", permutations = 999)
-              pvalues[i, j] <- mantelResult$signif
-            }
-          }
-        }
       
       colnames(correlationTable) <- selectedMatrices
       rownames(correlationTable) <- selectedMatrices
@@ -687,9 +647,6 @@ server <- function(input, output, session) {
     # Create a new correlation table with p-values
     correlationTableWithP <- correlationTable
     
-    # Add "*" to indicate significance if p-value is below threshold (e.g., 0.05)
-    correlationTableWithP[pvalues < 0.05] <- paste0(correlationTable[pvalues < 0.05], "*")
-    
     
     correlationTableDF <- as.data.frame(correlationTableWithP)  # Convert to data frame
     correlationTableDF$RowNames <- rownames(correlationTableDF)  # Add row names as a column
@@ -698,26 +655,8 @@ server <- function(input, output, session) {
     
     correlationTableDF <- correlationTableDF[, !grepl("RowNames.1", colnames(correlationTableDF))]
     
-    correlationTableDF 
-    
-    print(correlationTableDF)
-  
-    # Create the datatable
-   dt_tab <- datatable(
-      correlationTableDF,
-      rownames = FALSE,
-      options = list(
-        dom = 't',
-        paging = FALSE,
-        ordering = FALSE,
-        searching = FALSE,
-        info = FALSE,
-        columnDefs = list(list(targets = "_all", className = "dt-center"))
-      ),
-      callback = JS('table.column(0).nodes().to$().css({ "font-weight": "bold" })'),
-    ) 
-   
-   dt_tab 
+    correlationTableDF
+
   })
   
   # Generate text output
@@ -803,6 +742,9 @@ server <- function(input, output, session) {
           # Remove rows with non-numeric values
           plot_data <- plot_data[complete.cases(plot_data), ]
           
+          # Exclude diagonal values
+          plot_data <- plot_data[plot_data$X != plot_data$Y, ]
+          
           if (nrow(plot_data) > 0) {
             p <- ggplot(plot_data, aes(x = X, y = Y)) +
               geom_hex() +
@@ -862,6 +804,9 @@ server <- function(input, output, session) {
           # Remove rows with non-numeric values
           plot_data <- plot_data[complete.cases(plot_data), ]
           
+          # Exclude diagonal values
+          plot_data <- plot_data[plot_data$X != plot_data$Y, ]
+          
           if (nrow(plot_data) > 0) {
             p <- ggplot(plot_data, aes(x = X, y = Y)) +
               geom_hex() +
@@ -901,146 +846,95 @@ server <- function(input, output, session) {
     
     methods <- input$selectedMethods
     
-    if (length(methods) >= 2) {
-      plots <- list()
+    if (length(methods) >= 1) {
       
-      for (i in 1:(length(methods)-1)) {
-        for (j in (i+1):length(methods)) {
-          method1 <- methods[i]
-          method2 <- methods[j]
-          
-          similarityMatrix1 <- switch(
-            method1,
-            "Linear Kernel" = K.linear(transformedData()),
-            "Polynomial Kernel" = {
-              if (!exists("input$gamma") || is.null(input$gamma)) {
-                gamma_val <- 1 / data_dims$cols
-              } else {
-                gamma_val <- input$gamma
-              }
-              K.Polynomial(transformedData(), gamma = gamma_val)
-            },
-            "Gaussian Kernel" = {
-              if (!exists("input$gamma") || is.null(input$gamma)) {
-                gamma_val <- 1 / data_dims$cols
-              } else {
-                gamma_val <- input$gamma
-              }
-              K.Gaussian(transformedData(), gamma = gamma_val)
-            },
-            "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
-            "Bray-Curtis" = BC_fnc(transformedData()),
-            "Jaccard" = JC_fnc(transformedData()),
-            "Euclidean" = Euc_fnc(transformedData()),
-            "MDS" = MDS_fnc(transformedData()),
-            "DCA" = DCA_fnc(transformedData()),
-            "PLN" = PLN_fnc(transformedData()),
-            stop("Invalid method selected.")
-          )
-          
-          similarityMatrix2 <- switch(
-            method2,
-            "Linear Kernel" = K.linear(transformedData()),
-            "Polynomial Kernel" = {
-              if (!exists("input$gamma") || is.null(input$gamma)) {
-                gamma_val <- 1 / data_dims$cols
-              } else {
-                gamma_val <- input$gamma
-              }
-              K.Polynomial(transformedData(), gamma = gamma_val)
-            },
-            "Gaussian Kernel" = {
-              if (!exists("input$gamma") || is.null(input$gamma)) {
-                gamma_val <- 1 / data_dims$cols
-              } else {
-                gamma_val <- input$gamma
-              }
-              K.Gaussian(transformedData(), gamma = gamma_val)
-            },
-            "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
-            "Bray-Curtis" = BC_fnc(transformedData()),
-            "Jaccard" = JC_fnc(transformedData()),
-            "Euclidean" = Euc_fnc(transformedData()),
-            "MDS" = MDS_fnc(transformedData()),
-            "DCA" = DCA_fnc(transformedData()),
-            "PLN" = PLN_fnc(transformedData()),
-            stop("Invalid method selected.")
-          )
-          
-          correlationMatrix <- cor(similarityMatrix1, similarityMatrix2)
-          normalizedMatrix <- (correlationMatrix + 1) / 2  # Normalize to range [0, 1]
-          melted_data <- melt(normalizedMatrix)
-          
-          plot <- ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
-            geom_tile() +
-            labs(x = "", y = "") +
-            theme_bw() +
-            scale_fill_gradientn(colours = c("blue", "white", "red")) +
-            ggtitle(paste(method1, "vs", method2)) +
-            theme(plot.margin = margin(5, 5, 5, 5, "pt"),
-                  plot.background = element_rect(fill = "white"),
-                  panel.background = element_rect(fill = "white"),
-                  aspect.ratio = 1,
-                  plot.title = element_text(size = 14),
-                  axis.text = element_text(size = 10),
-                  axis.title = element_text(size = 12))
-          
-          plots[[paste(method1, method2)]] <- plot
-        }
-      }
       
-      # Create a grid of plots
+      plots <- lapply(methods, function(method) {
+        similarityMatrix <- switch(
+          method,
+          "Linear Kernel" = K.linear(transformedData()),
+          "Polynomial Kernel" = {
+            if (!exists("input$gamma") || is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Polynomial(transformedData(), gamma = gamma_val)
+          },
+          "Gaussian Kernel" = {
+            if (!exists("input$gamma") || is.null(input$gamma)) {
+              gamma_val <- 1 / data_dims$cols
+            } else {
+              gamma_val <- input$gamma
+            }
+            K.Gaussian(transformedData(), gamma = gamma_val)
+          },
+          "Arc-Cosine Kernel" = K.AK1_Final(transformedData()),
+          "Bray-Curtis" = BC_fnc(transformedData()),
+          "Jaccard" = JC_fnc(transformedData()),
+          "Euclidean" = Euc_fnc(transformedData()),
+          "MDS" = MDS_fnc(transformedData()),
+          "DCA" = DCA_fnc(transformedData()),
+          "PLN" = PLN_fnc(transformedData()),
+          stop("Invalid method selected.")
+        )
+        
+        correlationMatrix <- cor(similarityMatrix)
+        norma_data <- (1+correlationMatrix)/2
+        melted_data <- melt(norma_data)
+        ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
+          geom_tile() +
+          labs(x = "", y = "") +
+          theme_bw() +
+          scale_fill_gradientn(colours = c("blue", "white", "red"))+
+          ggtitle(method)+  # Add the method name as the plot title 
+          theme(plot.margin = margin(20, 20, 20, 20, "pt"),
+                plot.background = element_rect(fill = "white"),
+                panel.background = element_rect(fill = "white"),
+                aspect.ratio = 1,
+                plot.title = element_text(size = 14),
+                axis.text = element_text(size = 10),
+                axis.title = element_text(size = 12))
+      })
+      
       grid <- do.call(grid.arrange, c(plots, ncol = 3))  # Adjust the number of columns as desired
       
       # Display the grid
-      print(grid)
+      grid
     }
     
     selectedMatrices <- input$selectedMatrices
     
-    if (length(selectedMatrices) >= 2) {
-      plots <- list()
+    if (length(selectedMatrices) >= 1) {
       
-      for (i in 1:(length(selectedMatrices)-1)) {
-        for (j in (i+1):length(selectedMatrices)) {
-          matrixName1 <- selectedMatrices[i]
-          matrixName2 <- selectedMatrices[j]
-          
-          h1 <- unlist(values$matrixList[[matrixName1]])
-          p1 <- matrix(h1, nrow = sqrt(length(h1)), ncol = sqrt(length(h1)))
-          similarityMatrix1 <- cor(p1)
-          
-          h2 <- unlist(values$matrixList[[matrixName2]])
-          p2 <- matrix(h2, nrow = sqrt(length(h2)), ncol = sqrt(length(h2)))
-          similarityMatrix2 <- cor(p2)
-          
-          correlationMatrix <- cor(similarityMatrix1, similarityMatrix2)
-          normalizedMatrix <- (correlationMatrix + 1) / 2  # Normalize to range [0, 1]
-          melted_data <- melt(normalizedMatrix)
-          
-          plot <- ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
-            geom_tile() +
-            labs(x = "", y = "") +
-            theme_bw() +
-            scale_fill_gradientn(colours = c("blue", "white", "red")) +
-            ggtitle(paste(matrixName1, "vs", matrixName2)) +
-            theme(plot.margin = margin(5, 5, 5, 5, "pt"),
-                  plot.background = element_rect(fill = "white"),
-                  panel.background = element_rect(fill = "white"),
-                  aspect.ratio = 1,
-                  plot.title = element_text(size = 14),
-                  axis.text = element_text(size = 10),
-                  axis.title = element_text(size = 12))
-          
-          plots[[paste(matrixName1, matrixName2)]] <- plot
-        }
-      }
       
-      # Create a grid of plots
+      plots <- lapply(selectedMatrices, function(matrixName) {
+        h <- unlist(values$matrixList[[matrixName]])
+        p <- matrix(h,nrow = sqrt(length(h)),ncol = sqrt(length(h)))
+        correlationMatrix <- cor(p)
+        
+        norma_data <- (1+correlationMatrix)/2
+        melted_data <- melt(norma_data)
+        
+        ggplot(data = melted_data, aes(x = as.numeric(Var1), y = as.numeric(Var2), fill = value)) +
+          geom_tile() +
+          labs(x = "", y = "") +
+          theme_bw() +
+          scale_fill_gradientn(colours = c("blue", "white", "red"))+
+          ggtitle(matrixName)+  # Add the method name as the plot title 
+          theme(plot.margin = margin(20, 20, 20, 20, "pt"),
+                plot.background = element_rect(fill = "white"),
+                panel.background = element_rect(fill = "white"),
+                aspect.ratio = 1,
+                plot.title = element_text(size = 14),
+                axis.text = element_text(size = 10),
+                axis.title = element_text(size = 12))
+      })
+      
       grid <- do.call(grid.arrange, c(plots, ncol = 3))  # Adjust the number of columns as desired
       
       # Display the grid
-      print(grid)
+      grid
     }
   })
   
@@ -1082,17 +976,6 @@ server <- function(input, output, session) {
   output$matrixListOutput <- renderPrint({
     values$matrixList
     # names(values$matrixList)
-  })
-
-  # Print matrix list
-  output$NmatrixListOutput <- renderPrint({
-    names(values$matrixList)
-  })
-  
-  
-  # Print matrix list
-  output$GmatrixListOutput <- renderPrint({
-   str(values$matrixList)
   })
 
   
